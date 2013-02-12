@@ -3,7 +3,6 @@ __author__ = 'Janos G. Hajagos'
 import pyodbc as odbc
 import networkx as nx
 
-STATE = "NY"
 REFERRAL_TABLE_NAME = "referral.referral2011"
 NPI_DETAIL_TABLE_NAME = "referral.npi_summary_taxonomy"
 FIELD_NAME_FROM_RELATIONSHIP = "npi_from"
@@ -45,7 +44,7 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
     logger("Imported %s edges" % i)
     return graph
 
-def main(where_criteria="state = 'WY'", referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME, field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP):
+def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME, field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP):
     cursor = get_new_cursor()
 
     cursor.execute("drop table if exists npi_to_export_to_graph;")
@@ -108,4 +107,4 @@ select rt.%s,rt.%s,rt.weight from %s rt join npi_to_export_to_graph neg on rt.%s
     nx.write_graphml(ProviderGraph, "provider_graph.graphml")
 
 if __name__ == "__main__":
-    main()
+    main("state = 'WY'")
