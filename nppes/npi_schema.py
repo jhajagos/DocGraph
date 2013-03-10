@@ -332,7 +332,7 @@ create table healthcare_provider_taxonomies (
         taxonomy_load_table_script = generate_load_table_script(taxonomy_file_name,"healthcare_provider_taxonomies",r"\r\n")
 
 
-    taxonomy_processed_create_table_script = """drop table if exists provider_taxonomy_processed;
+    taxonomy_processed_create_table_script = """drop table if exists healthcare_provider_taxonomy_processed;
     create table  healthcare_provider_taxonomy_processed
         (npi char(11),
         depth integer,
