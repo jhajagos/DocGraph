@@ -1,8 +1,10 @@
 """
-Script to extract a subgraph from the DocGraph data set.
+Script to extract a subgraph from the DocGraph data set that is loaded in a MySQL
+database.
+
+Database connection is made through ODBC connection
 
 """
-
 
 __author__ = 'Janos G. Hajagos'
 
@@ -16,13 +18,16 @@ FIELD_NAME_FROM_RELATIONSHIP = "npi_from"
 FIELD_NAME_TO_RELATIONSHIP = "npi_to"
 FIELD_NAME_WEIGHT = "weight"
 
+
 def logger(string_to_write):
     print(string_to_write)
+
 
 def get_new_cursor(dsn_name="referral"):
     logger("Opening connection %s" % dsn_name)
     connection = odbc.connect("DSN=%s" % dsn_name, autocommit=True)
     return connection.cursor()
+
 
 def row_to_dictionary(row_obj,exclude_None = True):
     column_names = [desc[0] for desc in row_obj.cursor_description]
@@ -32,6 +37,7 @@ def row_to_dictionary(row_obj,exclude_None = True):
             if row_obj[i] is not None:
                 row_dict[column_names[i]] = row_obj[i]
     return row_dict
+
 
 def add_nodes_to_graph(cursor, graph, node_type, label_name = None):
     i = 0
@@ -45,6 +51,7 @@ def add_nodes_to_graph(cursor, graph, node_type, label_name = None):
         i += 1
     logger("Imported %s nodes" % i)
     return graph
+
 
 def add_edges_to_graph(cursor, graph, name="shares patients"):
     i = 0
@@ -148,9 +155,7 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
   where negt3.node_type = 'L' and negf3.node_type = 'L'
   ;""" % (field_name_to_relationship, field_name_from_relationship, FIELD_NAME_WEIGHT, referral_table_name, field_name_to_relationship, field_name_from_relationship)
 
-    #TODO: Add leaf-to-leaf
-
-    if add_leaf_to_leaf_edges:
+    if add_leaf_to_leaf_edges: # Danger is that there are too many leaves
         logger("Add leafing edges")
         logger(query_to_execute)
         cursor.execute(query_to_execute)
@@ -159,5 +164,5 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
     nx.write_graphml(ProviderGraph, file_name_prefix + "provider_graph.graphml")
 
 if __name__ == "__main__":
-    #main("zip = 'WY'")
-    main("zip like '11794%'", file_name_prefix="sbzip")
+    main("state = 'HI'",file_name_prefix="hi_")
+    #main("zip like '11794%'", file_name_prefix="sbzip")
