@@ -38,7 +38,8 @@ def transform_text_into_field(text_to_transform):
     text6_transform = split_and_join(text5_transform, ")","")
     text7_transform = split_and_join(text6_transform, ".","")
     text8_transform = split_and_join(text7_transform, "-","")
-    return text8_transform
+    text9_transform = split_and_join(text8_transform, "__","_")
+    return text9_transform
 
 
 def generate_alter_update_for_provider_taxonomy(fields_to_create, table_name_to_alter, target_taxonomy_field):
