@@ -179,7 +179,6 @@ def main(nppes_data_file_name, taxonomy_file_name = None):
                 field_length = "(%s)" % field_length
 
             field_name_data_types[field_name] = data_type + field_length
-    print(field_name_data_types)
 
     #Third pass through we write the ddl script
 
@@ -411,6 +410,7 @@ if __name__ == "__main__":
     main("/data/npi/npidata_20050523-20130113.csv","/data/npi/nucc_taxonomy_121.csv")
 
     #Loading the files
+    #python npi_schema.py > npi_schema.sql
     #python npi_schema.py > npi_schema.sql
     #mysql -u root -pd
         #create database npi;
