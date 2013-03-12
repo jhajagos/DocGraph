@@ -6,6 +6,7 @@ Database connection is made through ODBC connection
 
 """
 
+
 __author__ = 'Janos G. Hajagos'
 
 import pyodbc as odbc
