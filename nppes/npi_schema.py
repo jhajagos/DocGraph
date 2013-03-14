@@ -17,6 +17,7 @@
 from string import join
 import csv
 
+
 def generate_load_table_script(filename,table_name,row_terminator=r"\n",escape_char=r"\0"):
     return """LOAD DATA INFILE '%s' INTO TABLE %s
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '%s'
