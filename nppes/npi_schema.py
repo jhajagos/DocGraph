@@ -331,6 +331,7 @@ create table healthcare_provider_taxonomies (
         """
 
         taxonomy_load_table_script = generate_load_table_script(taxonomy_file_name,"healthcare_provider_taxonomies",r"\r\n")
+        taxonomy_load_table_script += "\n;\n"
 
 
     taxonomy_processed_create_table_script = """drop table if exists healthcare_provider_taxonomy_processed;
@@ -409,7 +410,7 @@ from nppes_flat nf where %s;\n\n""" % (provider_taxonomy_insert_statement, i + 1
 if __name__ == "__main__":
     # Hardcoded file names
     # The assumption in this script that you are using a Unix like file system
-    main("/data/npi/npidata_20050523-20130113.csv","/data/npi/nucc_taxonomy_121.csv")
+    main("/data/npi/npidata_20050523-20130113.csv", "/data/npi/nucc_taxonomy_121.csv")
 
     #Loading the files
     #python npi_schema.py > npi_schema.sql

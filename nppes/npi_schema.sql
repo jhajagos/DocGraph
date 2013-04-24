@@ -1317,7 +1317,7 @@ create table healthcare_provider_taxonomies (
 LOAD DATA INFILE '/data/npi/nucc_taxonomy_121.csv' INTO TABLE healthcare_provider_taxonomies
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
       LINES TERMINATED BY '\r\n'
-      IGNORE 1 LINES
+      IGNORE 1 LINES;
 
 drop table if exists healthcare_provider_taxonomy_processed;
     create table  healthcare_provider_taxonomy_processed
