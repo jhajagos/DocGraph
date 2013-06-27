@@ -83,7 +83,6 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
     logger(pprint.pformat(counter_dict))
     return graph
 
-
 def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
          field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP,
          file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name = "provider_name"):
@@ -166,7 +165,5 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
     logger("Writing GraphML file")
     nx.write_graphml(ProviderGraph, file_name_prefix + "provider_graph.graphml")
 
-
 if __name__ == "__main__":
-    main("state = 'HI'", file_name_prefix="hi_")
-    #main("zip like '11794%'", file_name_prefix="sbzip")
+    main("zip like '11215%' or zip like '11212%'", file_name_prefix="brooklyn_sample")
