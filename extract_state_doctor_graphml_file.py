@@ -125,10 +125,11 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
 
     logger("Populating leaf nodes")
 
-    query_to_execute = "select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi where neg.node_type = 'L'" % npi_detail_table_name
+    query_to_execute = """select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi where
+    neg.node_type = 'L'""" % npi_detail_table_name
     logger(query_to_execute)
     cursor.execute(query_to_execute)
-    ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "leaf", label_name = node_label_name)
+    ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "leaf", label_name=node_label_name)
 
     logger("Populating edges")
 
@@ -148,7 +149,7 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
     #TODO: Remove inline
     logger(query_to_execute)
     cursor.execute(query_to_execute)
-    ProviderGraph = add_edges_to_graph(cursor,ProviderGraph)
+    ProviderGraph = add_edges_to_graph(cursor, ProviderGraph)
 
     query_to_execute = """select rt3.%s, rt3.%s, rt3.%s,
     negt3.node_type as to_node_type, negf3.node_type as from_node_type
