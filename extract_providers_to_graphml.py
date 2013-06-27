@@ -1,5 +1,5 @@
 """
-Script to extract a subgraph from the DocGraph data set that is loaded in a MySQL
+Script to extract a sub-graph from the DocGraph data set that is loaded in a MySQL
 database.
 
 Database connection is made through ODBC connection
@@ -9,9 +9,14 @@ Database connection is made through ODBC connection
 
 __author__ = 'Janos G. Hajagos'
 
-import pyodbc as odbc
+try:
+    import pyodbc as dbc
+except ImportError:
+    pass
+
 import networkx as nx
 import pprint
+import sys
 
 REFERRAL_TABLE_NAME = "referral.referral2011"
 NPI_DETAIL_TABLE_NAME = "referral.npi_summary_taxonomy"
@@ -26,7 +31,7 @@ def logger(string_to_write):
 
 def get_new_cursor(dsn_name="referral"):
     logger("Opening connection %s" % dsn_name)
-    connection = odbc.connect("DSN=%s" % dsn_name, autocommit=True)
+    connection = dbc.connect("DSN=%s" % dsn_name, autocommit=True)
     return connection.cursor()
 
 
@@ -83,9 +88,10 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
     logger(pprint.pformat(counter_dict))
     return graph
 
-def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
+
+def extract_sub_graph(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
          field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP,
-         file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name = "provider_name"):
+         file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name = "provider_name",field_name_weight=FIELD_NAME_WEIGHT):
     cursor = get_new_cursor()
 
     cursor.execute("drop table if exists npi_to_export_to_graph;")
@@ -136,13 +142,13 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
   neg1.node_type as to_node_type, negf.node_type as from_node_type
    from %s rt1 join npi_to_export_to_graph neg1 on rt1.%s = neg1.npi
        join npi_to_export_to_graph negf on negf.npi = rt1.%s
-  where neg1.node_type = 'C'""" % (field_name_to_relationship, field_name_from_relationship, FIELD_NAME_WEIGHT, referral_table_name, field_name_to_relationship, field_name_from_relationship)
+  where neg1.node_type = 'C'""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name, field_name_to_relationship, field_name_from_relationship)
 
     query_second_part_edges = """select rt2.%s, rt2.%s, rt2.%s,
   negt.node_type as to_node_type, neg2.node_type as from_node_type
    from %s rt2 join npi_to_export_to_graph neg2 on rt2.%s = neg2.npi
        join npi_to_export_to_graph negt on negt.npi = rt2.%s
-  where neg2.node_type = 'C'""" % (field_name_to_relationship, field_name_from_relationship, FIELD_NAME_WEIGHT, referral_table_name, field_name_from_relationship, field_name_to_relationship)
+  where neg2.node_type = 'C'""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name, field_name_from_relationship, field_name_to_relationship)
 
     query_to_execute = "%s\nunion\n%s" % (query_first_part_edges, query_second_part_edges)
     #TODO: Remove inline
@@ -155,15 +161,17 @@ def main(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_tab
   from %s rt3 join npi_to_export_to_graph negt3 on rt3.%s = negt3.npi
   join npi_to_export_to_graph negf3 on rt3.%s = negf3.npi
   where negt3.node_type = 'L' and negf3.node_type = 'L'
-  ;""" % (field_name_to_relationship, field_name_from_relationship, FIELD_NAME_WEIGHT, referral_table_name, field_name_to_relationship, field_name_from_relationship)
+  ;""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name, field_name_to_relationship, field_name_from_relationship)
 
     if add_leaf_to_leaf_edges: # Danger is that there are too many leaves
         logger("Add leafing edges")
         logger(query_to_execute)
         cursor.execute(query_to_execute)
+        ProviderGraph = add_edges_to_graph(cursor, ProviderGraph)
 
     logger("Writing GraphML file")
-    nx.write_graphml(ProviderGraph, file_name_prefix + "provider_graph.graphml")
+    nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
 if __name__ == "__main__":
-    main("zip like '11215%' or zip like '11212%'", file_name_prefix="brooklyn_sample")
+   if len(sys.argv)  == 3:
+       extract_sub_graph(sys.argv[1], sys.argv[2])
