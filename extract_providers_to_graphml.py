@@ -2,18 +2,15 @@
 Script to extract a sub-graph from the DocGraph data set that is loaded in a MySQL
 database.
 
-Database connection is made through ODBC connection
+Database connection is made through ODBC connection but could easily be modified for
+any pydbapi compatible
 
 """
 
 
 __author__ = 'Janos G. Hajagos'
 
-try:
-    import pyodbc as dbc
-except ImportError:
-    pass
-
+import pyodbc as odbc
 import networkx as nx
 import pprint
 import sys
@@ -25,13 +22,13 @@ FIELD_NAME_TO_RELATIONSHIP = "npi_to"
 FIELD_NAME_WEIGHT = "weight"
 
 
-def logger(string_to_write):
+def logger(string_to_write=""):
     print(string_to_write)
 
 
 def get_new_cursor(dsn_name="referral"):
     logger("Opening connection %s" % dsn_name)
-    connection = dbc.connect("DSN=%s" % dsn_name, autocommit=True)
+    connection = odbc.connect("DSN=%s" % dsn_name, autocommit=True)
     return connection.cursor()
 
 
@@ -47,6 +44,7 @@ def row_to_dictionary(row_obj,exclude_None = True):
 
 def add_nodes_to_graph(cursor, graph, node_type, label_name = None):
     i = 0
+    nodes_initial = len(graph.nodes())
     for node in cursor:
         attributes = row_to_dictionary(node)
         if label_name:
@@ -55,7 +53,9 @@ def add_nodes_to_graph(cursor, graph, node_type, label_name = None):
         attributes["node_type"] = node_type
         graph.add_node(node.npi,attributes)
         i += 1
-    logger("Imported %s nodes" % i)
+    logger("Read %s rows from table" % i)
+    nodes_final = len(graph.nodes())
+    logger("Imported %s nodes" % (nodes_final - nodes_initial,))
     return graph
 
 
@@ -89,52 +89,67 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
     return graph
 
 
-def extract_sub_graph(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
+def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
          field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP,
-         file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name = "provider_name",field_name_weight=FIELD_NAME_WEIGHT):
+         file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name="provider_name",
+         field_name_weight=FIELD_NAME_WEIGHT, add_leaf_nodes=True):
     cursor = get_new_cursor()
 
-    cursor.execute("drop table if exists npi_to_export_to_graph;")
-    cursor.execute("create table npi_to_export_to_graph (npi char(10),node_type char(1));")
+    logger("Configuration")
+    logger("Selection criteria for subset graph: %s" % where_criteria)
+    logger("Referral table _name: %s" % referral_table_name)
+    logger("NPI detail table name: %s" % npi_detail_table_name)
+    logger("Nodes will be labelled by: %s" % node_label_name)
+    logger("Leaf-to-leaf edges will be exported? %s" % add_leaf_to_leaf_edges)
+
+    logger()
+    drop_table_sql = "drop table if exists npi_to_export_to_graph;"
+    logger(drop_table_sql)
+    cursor.execute(drop_table_sql)
+
+    logger()
+    create_table_sql = "create table npi_to_export_to_graph (npi char(10),node_type char(1));"
+    logger(create_table_sql)
+    cursor.execute(create_table_sql)
 
     # Get NPI from each side of the relationship
     query_first_part = """select distinct npi from %s rt1 join %s tnd1 on rt1.%s = tnd1.npi where %s""" % (referral_table_name,npi_detail_table_name,field_name_from_relationship, where_criteria)
     query_second_part = """select distinct npi from %s rt2 join %s tnd2 on rt2.%s = tnd2.npi where %s""" % (referral_table_name,npi_detail_table_name,field_name_to_relationship, where_criteria)
-    query_to_execute = "insert into npi_to_export_to_graph (npi,node_type)select t.*,'C' from (\n%s\nunion\n%s)\nt;" % (query_first_part, query_second_part)
+    core_node_query_to_execute = "insert into npi_to_export_to_graph (npi,node_type) select t.*,'C' from (\n%s\nunion\n%s)\nt;" % (query_first_part, query_second_part)
 
-    logger(query_to_execute)
-    cursor.execute(query_to_execute)
-
-    query_to_execute = "select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi" % npi_detail_table_name
-    logger(query_to_execute)
+    logger(core_node_query_to_execute)
+    cursor.execute(core_node_query_to_execute)
 
     logger("Adding indices")
     cursor.execute("create unique index idx_primary_npi_graph on npi_to_export_to_graph(npi);")
 
+    npi_detail_query_to_execute = "select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi" % npi_detail_table_name
+    logger(npi_detail_query_to_execute)
+
     logger("Populating core nodes")
-    cursor.execute(query_to_execute)
+    cursor.execute(npi_detail_query_to_execute)
     ProviderGraph = nx.DiGraph()
-    ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "core", label_name = node_label_name)
+    ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "core", label_name=node_label_name)
 
-    logger("Adding leaf nodes")
+    if add_leaf_nodes:
+        logger("Adding leaf nodes")
 
-    query_to_execute = """insert into npi_to_export_to_graph (npi,node_type)
-    select t.npi,'L'  from (
-  select distinct rt1.%s as npi FROM npi_to_export_to_graph neg1 join %s rt1 on rt1.%s = neg1.npi
-    union
-  select distinct rt2.%s as npi FROM npi_to_export_to_graph neg2 join %s rt2 on rt2.%s = neg2.npi
-  ) t where npi not in (select npi from npi_to_export_to_graph)""" % (field_name_from_relationship, referral_table_name, field_name_to_relationship, field_name_to_relationship, referral_table_name, field_name_from_relationship)
+        add_leaf_node_query_to_execute = """insert into npi_to_export_to_graph (npi,node_type)
+        select t.npi,'L'  from (
+      select distinct rt1.%s as npi FROM npi_to_export_to_graph neg1 join %s rt1 on rt1.%s = neg1.npi
+        union
+      select distinct rt2.%s as npi FROM npi_to_export_to_graph neg2 join %s rt2 on rt2.%s = neg2.npi
+      ) t where npi not in (select npi from npi_to_export_to_graph)""" % (field_name_from_relationship, referral_table_name, field_name_to_relationship, field_name_to_relationship, referral_table_name, field_name_from_relationship)
 
-    logger(query_to_execute)
-    cursor.execute(query_to_execute)
+        logger(add_leaf_node_query_to_execute)
+        cursor.execute(add_leaf_node_query_to_execute)
 
-    logger("Populating leaf nodes")
+        logger("Populating leaf nodes")
 
-    query_to_execute = """select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi where
-    neg.node_type = 'L'""" % npi_detail_table_name
-    logger(query_to_execute)
-    cursor.execute(query_to_execute)
-    ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "leaf", label_name=node_label_name)
+        populate_leaf_nodes_query_to_execute = "select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi where neg.node_type = 'L'" % npi_detail_table_name
+        logger(populate_leaf_nodes_query_to_execute)
+        cursor.execute(populate_leaf_nodes_query_to_execute)
+        ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "leaf", label_name=node_label_name)
 
     logger("Populating edges")
 
@@ -150,28 +165,30 @@ def extract_sub_graph(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, n
        join npi_to_export_to_graph negt on negt.npi = rt2.%s
   where neg2.node_type = 'C'""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name, field_name_from_relationship, field_name_to_relationship)
 
-    query_to_execute = "%s\nunion\n%s" % (query_first_part_edges, query_second_part_edges)
-    #TODO: Remove inline
-    logger(query_to_execute)
-    cursor.execute(query_to_execute)
+    add_core_query_to_execute = "%s\nunion\n%s" % (query_first_part_edges, query_second_part_edges)
+
+    logger(add_core_query_to_execute)
+    cursor.execute(add_core_query_to_execute)
     ProviderGraph = add_edges_to_graph(cursor, ProviderGraph)
 
-    query_to_execute = """select rt3.%s, rt3.%s, rt3.%s,
-    negt3.node_type as to_node_type, negf3.node_type as from_node_type
-  from %s rt3 join npi_to_export_to_graph negt3 on rt3.%s = negt3.npi
-  join npi_to_export_to_graph negf3 on rt3.%s = negf3.npi
-  where negt3.node_type = 'L' and negf3.node_type = 'L'
-  ;""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name, field_name_to_relationship, field_name_from_relationship)
+    if add_leaf_to_leaf_edges: #Danger is that there are too many leaves
+        logger("Add leaf edges")
 
-    if add_leaf_to_leaf_edges: # Danger is that there are too many leaves
-        logger("Add leafing edges")
-        logger(query_to_execute)
-        cursor.execute(query_to_execute)
-        ProviderGraph = add_edges_to_graph(cursor, ProviderGraph)
+        leaf_query_to_execute = """select rt3.%s, rt3.%s, rt3.%s,
+        negt3.node_type as to_node_type, negf3.node_type as from_node_type
+      from %s rt3 join npi_to_export_to_graph negt3 on rt3.%s = negt3.npi
+      join npi_to_export_to_graph negf3 on rt3.%s = negf3.npi
+      where negt3.node_type = 'L' and negf3.node_type = 'L'
+      ;""" % (field_name_to_relationship, field_name_from_relationship, field_name_weight, referral_table_name,
+              field_name_to_relationship, field_name_from_relationship)
+        cursor.execute(leaf_query_to_execute)
+        logger(leaf_query_to_execute)
+        add_edges_to_graph(cursor, ProviderGraph)
+    else:
+        logger("Leaf-to-leaf edges were not selected for export")
 
     logger("Writing GraphML file")
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
 if __name__ == "__main__":
-   if len(sys.argv)  == 3:
-       extract_sub_graph(sys.argv[1], sys.argv[2])
+    extract_provider_network(sys.argv[1],sys.arg[2])
