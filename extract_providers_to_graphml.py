@@ -198,7 +198,7 @@ if __name__ == "__main__":
 python extract_providers_to_graphml.py "condition='1234567890'" file_name_prefix [leaf-nodes] [Leaf-edges]""")
 
     elif len(sys.argv) == 3:
-        extract_provider_network(sys.argv[1], sys.arg[2])
+        extract_provider_network(sys.argv[1], file_name_prefix=sys.arg[2])
     else:
         if "leaf-nodes" in sys.argv[3:]:
             leaf_nodes = True
@@ -210,4 +210,5 @@ python extract_providers_to_graphml.py "condition='1234567890'" file_name_prefix
         else:
             leaf_edges = False
 
-        extract_provider_network(sys.argv[1], sys.argv[2], add_leaf_nodes=leaf_nodes, add_leaf_to_leaf_edges=leaf_edges)
+        extract_provider_network(sys.argv[1], file_name_prefix=sys.argv[2], add_leaf_nodes=leaf_nodes,
+                                 add_leaf_to_leaf_edges=leaf_edges)
