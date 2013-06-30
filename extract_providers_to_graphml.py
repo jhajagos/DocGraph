@@ -16,7 +16,7 @@ import pprint
 import sys
 
 REFERRAL_TABLE_NAME = "referral.referral2011"
-NPI_DETAIL_TABLE_NAME = "referral.npi_summary_taxonomy"
+NPI_DETAIL_TABLE_NAME = "referral.npi_summary_primary_taxonomy"
 FIELD_NAME_FROM_RELATIONSHIP = "npi_from"
 FIELD_NAME_TO_RELATIONSHIP = "npi_to"
 FIELD_NAME_WEIGHT = "weight"
@@ -191,4 +191,4 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
 if __name__ == "__main__":
-    extract_provider_network(sys.argv[1],sys.arg[2])
+    extract_provider_network(sys.argv[1],file_name_prefix=sys.argv[2])
