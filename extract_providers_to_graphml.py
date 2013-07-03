@@ -146,7 +146,8 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
 
         logger("Populating leaf nodes")
 
-        populate_leaf_nodes_query_to_execute = "select * from npi_to_export_to_graph neg join %s tnd on tnd.npi = neg.npi where neg.node_type = 'L'" % npi_detail_table_name
+        populate_leaf_nodes_query_to_execute = """select * from npi_to_export_to_graph neg join %s tnd
+            on tnd.npi = neg.npi where neg.node_type = 'L'""" % npi_detail_table_name
         logger(populate_leaf_nodes_query_to_execute)
         cursor.execute(populate_leaf_nodes_query_to_execute)
         ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "leaf", label_name=node_label_name)
@@ -191,4 +192,23 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
 if __name__ == "__main__":
-    extract_provider_network(sys.argv[1],file_name_prefix=sys.argv[2])
+    number_of_args = len(sys.argv)
+    if number_of_args == 1:
+        print("""Usage:
+python extract_providers_to_graphml.py "condition='1234567890'" file_name_prefix [leaf-nodes] [Leaf-edges]""")
+
+    elif len(sys.argv) == 3:
+        extract_provider_network(sys.argv[1], file_name_prefix=sys.arg[2])
+    else:
+        if "leaf-nodes" in sys.argv[3:]:
+            leaf_nodes = True
+        else:
+            leaf_nodes = False
+
+        if "leaf-edges" in sys.argv[3:]:
+            leaf_edges = True
+        else:
+            leaf_edges = False
+
+        extract_provider_network(sys.argv[1], file_name_prefix=sys.argv[2], add_leaf_nodes=leaf_nodes,
+                                 add_leaf_to_leaf_edges=leaf_edges)
