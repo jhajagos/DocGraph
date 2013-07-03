@@ -195,15 +195,15 @@ if __name__ == "__main__":
     number_of_args = len(sys.argv)
     if number_of_args == 1:
         print("""Usage:
-python extract_providers_to_graphml.py "condition='1234567890'" file_name_prefix [leaf-nodes] [Leaf-edges]""")
+python extract_providers_to_graphml.py "condition='1234567890'" file_name_prefix [no-leaf-nodes] [Leaf-edges]""")
 
     elif len(sys.argv) == 3:
-        extract_provider_network(sys.argv[1], file_name_prefix=sys.arg[2])
+        extract_provider_network(sys.argv[1], file_name_prefix=sys.argv[2])
     else:
-        if "leaf-nodes" in sys.argv[3:]:
-            leaf_nodes = True
-        else:
+        if "no-leaf-nodes" in sys.argv[3:]:
             leaf_nodes = False
+        else:
+            leaf_nodes = True
 
         if "leaf-edges" in sys.argv[3:]:
             leaf_edges = True
