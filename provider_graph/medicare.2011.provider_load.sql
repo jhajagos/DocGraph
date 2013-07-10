@@ -1,3 +1,5 @@
+/* This is a template file that is customized by generate_provider_graph_load_sql.py */
+
 create database provider_graph;
 use provider_graph;
 
@@ -19,7 +21,7 @@ create table provider_directed_graph (id integer not null auto_increment, npi_fr
 
 
 /* Load data from CSV */
-LOAD DATA INFILE '/tmp/refer.2011.csv' INTO TABLE provider_directed_graph
+LOAD DATA INFILE '/temp/referral.2011.csv' INTO TABLE provider_directed_graph
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
       LINES TERMINATED BY '\n'
        (@npi_from, @npi_to, @weight)
@@ -38,8 +40,7 @@ update provider_directed_graph set log2_weight = log2(weight),
 
 update provider_directed_graph set
   npis_key = concat('|',npi1,'||', npi2, '|'),
-  set_indicator = '2011.Medicare';
-
+  set_indicator = 'provider_graph';
 
 /* Create indexes on the table */
 
@@ -98,46 +99,11 @@ select *, log2(mean_weight) as mean_log2_weight, ln(mean_weight) as mean_ln_weig
         from provider_directed_graph group by npis_key) t) tt;
 
  /* This allows us to know which direction the weight relation originally went in */
- update provider_undirected_graph pug join provider_directed_graph pdg
+
+/* This update join is taking several days on MySQL while the above took 7 hours */
+
+
+update provider_undirected_graph pug join provider_directed_graph pdg
     on (pdg.npi_from = pug.npi1 and pdg.npi_to = pug.npi2
    and pug.original_link_type = 2 and pug.original_weight_relation = 'ft')
     set pug.original_weight_relation = case when pdg.weight = min_weight then 'ftl' when pdg.weight = max_weight then 'ftg' end;
-
-
-
-
-
-/* Nodes which are a complete graph 3 */
-/*
-    2 - 3
-    | /
-    1
- */
-
-drop table if exists provider_three_complete_graph;
-create table provider_three_complete_graph(id integer not null AUTO_INCREMENT,
-  npi1 char(10), npi2 char(10), npi3 char(10),
-  id1 integer, id2 integer, id3 integer,
-  weight12 double, weight23 double,  weight31 double, mean_weight double,
-  npis_key12 char(24), npis_key23 char(24), npis_key31 char(24),
-  npis_key_complete_graph_3 char(36), set_indicator varchar(100), primary key(id));
-
-
-/* Nodes which are a complete graph 4 */
-/*
-    2 - 3
-    | X |
-    1 - 4
-*/
-
-
-drop table if exists provider_four_complete_graph;
-create table provider_four_complete_graph(id integer not null auto_increment,
-  npi1 char(10), npi2 char(10), npi3 char(10), npi4 char(10),
-  id1 integer, id2 integer, id3 integer, id4 integer,
-  weight12 double, weight23 double,  weight31 double, weight34 double, weight42 double, weight14 double,
-  mean_weight double, npis_key123 char(36), npis_key134 char(36),
-  npis_key_complete_graph_4 char(48), set_indicator varchar(100), primary key(id));
-
-
-

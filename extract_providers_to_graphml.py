@@ -7,13 +7,13 @@ any pydbapi compatible
 
 """
 
-
 __author__ = 'Janos G. Hajagos'
 
 import pyodbc as odbc
 import networkx as nx
 import pprint
 import sys
+import csv
 
 REFERRAL_TABLE_NAME = "referral.referral2011"
 NPI_DETAIL_TABLE_NAME = "referral.npi_summary_primary_taxonomy"
@@ -92,7 +92,7 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
 def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
          field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP,
          file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name="provider_name",
-         field_name_weight=FIELD_NAME_WEIGHT, add_leaf_nodes=True):
+         field_name_weight=FIELD_NAME_WEIGHT, add_leaf_nodes=True, graph_type="directed", csv_output=False):
     cursor = get_new_cursor()
 
     logger("Configuration")
@@ -128,7 +128,12 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
 
     logger("Populating core nodes")
     cursor.execute(npi_detail_query_to_execute)
-    ProviderGraph = nx.DiGraph()
+
+    if graph_type == "directed":
+        ProviderGraph = nx.DiGraph()
+    elif graph_type == "undirected":
+        ProviderGraph = nx.Graph()
+
     ProviderGraph = add_nodes_to_graph(cursor, ProviderGraph, "core", label_name=node_label_name)
 
     if add_leaf_nodes:
@@ -190,6 +195,14 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
 
     logger("Writing GraphML file")
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
+
+    if csv_output:
+        csv_file_name = file_name_prefix + "_edge_list_with_weight.csv"
+
+        with open(csv_file_name,"wb") as f:
+            csv_edges = csv.writer(f)
+            for edge in nx.edges_iter(ProviderGraph):
+                csv_edges.writerow()
 
 if __name__ == "__main__":
     number_of_args = len(sys.argv)
