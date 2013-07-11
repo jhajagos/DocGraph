@@ -92,7 +92,7 @@ def add_edges_to_graph(cursor, graph, name="shares patients"):
 def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_NAME, npi_detail_table_name=NPI_DETAIL_TABLE_NAME,
          field_name_to_relationship=FIELD_NAME_TO_RELATIONSHIP, field_name_from_relationship=FIELD_NAME_FROM_RELATIONSHIP,
          file_name_prefix="",add_leaf_to_leaf_edges=False, node_label_name="provider_name",
-         field_name_weight=FIELD_NAME_WEIGHT, add_leaf_nodes=True, graph_type="directed", csv_output=False):
+         field_name_weight=FIELD_NAME_WEIGHT, add_leaf_nodes=True, graph_type="directed", csv_output=True):
     cursor = get_new_cursor()
 
     logger("Configuration")
@@ -197,12 +197,17 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
     if csv_output:
-        csv_file_name = file_name_prefix + "_edge_list_with_weight.csv"
+        csv_file_name = file_name_prefix + "_edge_list_with_weights.csv"
 
+        logger("Writing CSV of edges with weights")
         with open(csv_file_name,"wb") as f:
             csv_edges = csv.writer(f)
-            for edge in nx.edges_iter(ProviderGraph):
-                csv_edges.writerow()
+            for node1 in ProviderGraph.edge:
+                for node2 in ProviderGraph.edge[node1]:
+                    npi_from = node1
+                    npi_to = node2
+                    edge_data = ProviderGraph[node1][node2]
+                    csv_edges.writerow((npi_from, npi_to, edge_data["weight"]))
 
 if __name__ == "__main__":
     number_of_args = len(sys.argv)

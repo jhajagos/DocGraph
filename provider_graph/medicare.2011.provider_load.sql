@@ -21,7 +21,7 @@ create table provider_directed_graph (id integer not null auto_increment, npi_fr
 
 
 /* Load data from CSV */
-LOAD DATA INFILE '/temp/referral.2011.csv' INTO TABLE provider_directed_graph
+LOAD DATA INFILE '/tmp/referral.2011.csv' INTO TABLE provider_directed_graph
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
       LINES TERMINATED BY '\n'
        (@npi_from, @npi_to, @weight)
