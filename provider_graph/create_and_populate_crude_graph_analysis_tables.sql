@@ -36,6 +36,29 @@ select
   on pug3.npi2 = pug2.npi2 and pug3.npi1 = pug1.npi1
   ;
 
+create table provider_npis_in_triangles (npi char(10) not null, primary key(npi));
+
+insert into provider_npis_in_triangles (npi)
+  select distinct npi1 from provider_three_complete_graph
+    union
+  select distinct npi2 from provider_three_complete_graph
+    union
+  select distinct npi3 from provider_three_complete_graph;
+
+/*
+
+select ptcg.*, nspt1.provider_name, nspt1.taxonomy_name, nspt2.provider_name, nspt2.taxonomy_name, nspt3.provider_name, nspt3.taxonomy_name
+from provider_three_complete_graph ptcg join
+  referral.npi_summary_primary_taxonomy nspt1
+    on nspt1.npi = ptcg.npi1
+  join referral.npi_summary_primary_taxonomy nspt2
+    on nspt2.npi = ptcg.npi2
+  join referral.npi_summary_primary_taxonomy nspt3
+    on nspt3.npi = ptcg.npi3
+  order by min_weight desc;
+
+*/
+
 create index idx_p3cg_npi1 on provider_three_complete_graph(npi1);
 create index idx_p3cg_npi2 on provider_three_complete_graph(npi2);
 create index idx_p3cg_npi3 on provider_three_complete_graph(npi3);
@@ -53,6 +76,7 @@ create table provider_four_complete_graph(id integer not null auto_increment,
   id1 integer, id2 integer, id3 integer, id4 integer,
   set_indicator varchar(100), primary key(id));
 
+
 /*
 insert into provider_four_complete_graph
   (npi1, npi2, npi3, npi4, id1, id2, id3, id4, min_weight)
@@ -63,14 +87,6 @@ insert into provider_four_complete_graph
     on ptcg1.npi1 = ptcg2.npi1 and
      ptcg1.npi3 = ptcg2.npi2;
 
-create table provider_npis_in_triangles (npi char(10) not null, primary key(npi));
-
-insert into provider_npis_in_triangles (npi)
-  select distinct npi1 from provider_three_complete_graph
-    union
-  select distinct npi2 from provider_three_complete_graph
-    union
-  select distinct npi3 from provider_three_complete_graph;
 
 
 insert into provider_npis_in_four_complete (npi)

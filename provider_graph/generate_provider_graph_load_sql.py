@@ -34,6 +34,6 @@ def main(database_name, csv_file_name, set_identifier, template_name="template_c
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        main("provider_graph","/tmp/referral.2011.csv","medicare.2011")
+        print("Usage:\npython generate_provider_graph_load_sql.py dbname /tmp/path/referral.csv graphlabel")
     else:
         main(sys.argv[1], sys.argv[2], sys.argv[3])

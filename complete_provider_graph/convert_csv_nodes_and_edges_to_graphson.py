@@ -52,7 +52,6 @@ import copy
 
 PROTECTED_FIELD_NAMES = ["_label","_id", "_outE", "_inE"]
 
-
 def logger(string_to_log):
     print(string_to_log)
 
