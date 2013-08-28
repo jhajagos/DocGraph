@@ -97,9 +97,9 @@ insert into npi_summary_taxonomy
       
       ) fp
      left outer join npi.healthcare_provider_taxonomies pt1 on pt1.taxonomy_code = fp.taxonomy_code
-     left outer join npi.healthcare_provider_taxonomy_processed hptp on hptp.npi = nh1.npi
+     left outer join npi.healthcare_provider_taxonomy_processed hptp on hptp.npi = fp.npi
      ;
 
   update npi_summary_taxonomy set zip5 = left(zip, 5);
      
-  create index idx_npi_summary on referral.npi_summary_taxonomy (npi);
+  create index idx_npi_summary on npi_summary_taxonomy (npi);

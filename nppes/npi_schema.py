@@ -356,7 +356,7 @@ create table healthcare_provider_taxonomies (
                 where_clause += " Healthcare_Provider_Taxonomy_Code_%s is not null and" % (j + 1,)
             where_clause = where_clause[:-4]
         else:
-            where_clause =  """Healthcare_Provider_Taxonomy_Code_%s is null
+            where_clause = """Healthcare_Provider_Taxonomy_Code_%s is null
 and Healthcare_Provider_Taxonomy_Code_%s is not null""" % (i + 2, i + 1)
 
         provider_taxonomy_processed_string += """%s select nf.npi, %s, concat(%s) as taxonomy_string
@@ -405,6 +405,16 @@ from nppes_flat nf where %s;\n\n""" % (provider_taxonomy_insert_statement, i + 1
     print(alter_table_sql)
     print(provider_taxonomy_processed_string)
     print(update_table_sql)
+
+    create_indexes_sql = """/* Add indices to the tables */
+
+create unique index pk_npi_nppes_header on npi.nppes_header(npi);
+create unique index pk_npi_hct_proc on healthcare_provider_taxonomy_processed(npi);
+create index idx_oth_prov_id_npi on other_provider_identifiers(npi);
+create index idx_provider_licenses on provider_licenses(npi);
+"""
+    print("")
+    print(create_indexes_sql)
 
 
 if __name__ == "__main__":
