@@ -1,5 +1,6 @@
 
  use referral;
+
  drop table npi_summary_taxonomy;
  create table npi_summary_taxonomy (npi  char(10), 
    state varchar(2),
@@ -57,10 +58,11 @@ insert into npi_summary_taxonomy
     is_diagnostic_radiology,
     is_nuclear_radiology
   )
- select fp.*, 
-  concat(pt1.provider_type,
+ select fp.*,
+   concat(pt1.provider_type,
     if(pt1.classification = '','',concat(' - ', pt1.classification)),
     if(pt1.specialization = '','',concat(' - ', pt1.specialization))) as taxonomy_name,
+    flattened_taxonomy_string,
     is_ambulance,
     is_anesthesiology,
     is_chiropractor,
@@ -94,12 +96,15 @@ insert into npi_summary_taxonomy
       pl1.Healthcare_Provider_Taxonomy_Code as taxonomy_code
      from npi.nppes_header nh1
       left outer join npi.provider_licenses pl1 on pl1.npi = nh1.NPI
-      
       ) fp
      left outer join npi.healthcare_provider_taxonomies pt1 on pt1.taxonomy_code = fp.taxonomy_code
      left outer join npi.healthcare_provider_taxonomy_processed hptp on hptp.npi = fp.npi
      ;
 
   update npi_summary_taxonomy set zip5 = left(zip, 5);
-     
+
   create index idx_npi_summary on npi_summary_taxonomy (npi);
+
+  create view npi_summary_primary_taxonomy as
+    select * from
+  npi_summary_taxonomy where sequence_id = 1;
