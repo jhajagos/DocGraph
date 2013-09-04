@@ -12,7 +12,7 @@
    sequence_id int,
    taxonomy_code varchar(16),
    taxonomy_name varchar(1023),
-   is_ambulance boolean,
+   flattened_taxonomy_string varchar(1023),
    is_ambulance boolean,
    is_anesthesiology boolean,
    is_chiropractor boolean,
@@ -37,6 +37,7 @@
  
 insert into npi_summary_taxonomy
   (npi,state,zip,city,sole_provider,provider_name,sequence_id,taxonomy_code,taxonomy_name,
+    flattened_taxonomy_string,
     is_ambulance,
     is_anesthesiology,
     is_chiropractor,
