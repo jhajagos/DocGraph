@@ -21,9 +21,9 @@ import os
 import pyodbc as odbc
 import glob
 
+
 def logger(string_to_write=""):
     print(string_to_write)
-
 
 logger("Open GIS workspace")
 workspace_path = "E:\\data\\shapefiles\\"
@@ -87,25 +87,40 @@ def get_new_cursor(dsn_name="nppes"):
 
 def extract_addresses_to_csv(directory, n=10000):
     cursor = get_new_cursor()
-    cursor.execute("""select first_line as address, city as city, state as state, zip5 as zip,
-        address_hash as address_hash from address where country_code = 'US'
-                   """)
-
     header = ["address", "city", "state", "zip", "address_hash"]
-
+    h = 0
     i = 0
     j = 1
-    for row in cursor:
-        if i % n == 0:
-            csv_file_name = os.path.join(directory, "us_addresses_%s.csv" % j)
-            logger("Writing file '%s'" % csv_file_name)
-            fwc = open(csv_file_name, "wb")
-            csv_writer = csv.writer(fwc)
-            csv_writer.writerow(header)
-            j += 1
 
-        csv_writer.writerow([row.address, row.city, row.state, row.zip, row.address_hash])
-        i += 1
+    query_result_size = n * 10
+    cursor.execute("select count(*) as counter from address where country_code = 'US'")
+    r = list(cursor)
+    record_count = r[0][0]
+    logger("Transferring %s records" % record_count)
+    address_hash = ''
+
+    while (h * query_result_size) < (record_count + query_result_size):
+        query_string = """select first_line as address, city as city, state as state, zip5 as zip,
+        address_hash as address_hash from address where country_code = 'US'
+        and address_hash > '%s'
+        order by address_hash limit %s;""" % (address_hash, query_result_size)
+
+        logger(query_string)
+        cursor.execute(query_string)
+
+        for row in cursor:
+            if i % n == 0:
+                csv_file_name = os.path.join(directory, "us_addresses_%s.csv" % j)
+                logger("Writing file '%s'" % csv_file_name)
+                fwc = open(csv_file_name, "wb")
+                csv_writer = csv.writer(fwc)
+                csv_writer.writerow(header)
+                j += 1
+
+            address_hash = row.address_hash
+            csv_writer.writerow([row.address, row.city, row.state, row.zip, address_hash])
+            i += 1
+        h += 1
 
 
 def extract_city_state_to_csv(directory):
@@ -138,7 +153,7 @@ def extract_zip_to_csv(directory):
 
 def extract_zip4_to_csv(directory, n=10000):
     cursor = get_new_cursor()
-    cursor.execute("""select zip5 as zip, zip4 as zip4 from address where country_code = 'US' limit 20001""")
+    cursor.execute("""select distinct zip5 as zip, zip4 as zip4 from address where country_code = 'US'""")
 
     header = ["zip", "zip4"]
     i = 0
@@ -156,7 +171,7 @@ def extract_zip4_to_csv(directory, n=10000):
         i += 1
 
 
-def geocode_addresses(directory, file_pattern="us_address*.csv"):
+def geocode_addresses(directory, file_pattern="us_address*.csv", replace_file=False):
     csv_files = glob.glob(os.path.join(directory, file_pattern))
 
     for csv_file in csv_files:
@@ -165,15 +180,37 @@ def geocode_addresses(directory, file_pattern="us_address*.csv"):
         path_file, ext = os.path.splitext(csv_file)
         shapefile = path_file + ".shp"
         logger(shapefile)
-        geocode_addresses_to_csv(GP, address_locator, address_field_map, csv_file, shapefile, geocoded_csv_file_name, ["address_ha", "match_addr", "address", "state", "city", "zip"])
+        file_exists = os.path.exists(geocoded_csv_file_name)
+        if not file_exists or replace_file:
+            geocode_addresses_to_csv(GP, address_locator, address_field_map, csv_file, shapefile, geocoded_csv_file_name, ["address_ha", "match_addr", "address", "city", "state", "zip"])
 
 
-def geocode_city_state(directory, file_pattern):
-    pass
+def geocode_city_state(directory):
+    city_state_csv = os.path.join(directory, "us_city_state.csv")
+    geocode_to_csv = os.path.join(directory, "geo_us_city_state.csv")
+    shapefile = os.path.join(directory, "geo_us_city_state.shp")
+    geocode_addresses_to_csv(GP, city_state_locator, address_field_map, city_state_csv, shapefile, geocode_to_csv, ["city", "state"])
 
 
-def geocode_zip(directory, file_pattern):
-    pass
+def geocode_zip(directory):
+    zip_csv = os.path.join(directory, "us_zip.csv")
+    geocode_to_csv = os.path.join(directory, "geo_us_zip.csv")
+    shapefile = os.path.join(directory, "geo_us_zip.shp")
+    geocode_addresses_to_csv(GP, zip_locator, zip_field_map, zip_csv, shapefile, geocode_to_csv, ["zip"])
+
+
+def geocode_zip4(directory, file_pattern="us_zip4*.csv", replace_file=False):
+    csv_files = glob.glob(os.path.join(directory, file_pattern))
+
+    for csv_file in csv_files:
+        directory, file_name = os.path.split(csv_file)
+        geocoded_csv_file_name = os.path.join(directory, "geo_" + file_name)
+        path_file, ext = os.path.splitext(csv_file)
+        shapefile = path_file + ".shp"
+        logger(shapefile)
+        file_exists = os.path.exists(geocoded_csv_file_name)
+        if file_exists == False or replace_file == True:
+            geocode_addresses_to_csv(GP, zip4_locator, zip4_field_map, csv_file, shapefile, geocoded_csv_file_name, ["zip", "zip4"])
 
 
 def write_geocode_address_csv_to_sql(directory, file_patterns="geo_us_address*.csv"):
@@ -185,24 +222,34 @@ def write_geocode_address_csv_to_sql(directory, file_patterns="geo_us_address*.c
             with open(geo_csv_file, "rb") as fc:
                 geo_csv_dict = csv.DictReader(fc)
                 for geo_dict in geo_csv_dict:
-                    fws.write("update address set latitude = %s, longitude = %s where address_hash = '%s';\n\n"
+                    fws.write("update address set latitude = %s, longitude = %s, geocode_method = 'address' where address_hash = '%s'"";\n\n"
                               % (geo_dict["Y"], geo_dict["X"], geo_dict["address_ha"]))
 
 
-def execute_geocode_to_sql(sql_path):
+def write_geocode_city_state_csv_to_sql(directory):
     pass
+
+
+def write_geocode_zip_csv_to_sql(directory):
+    pass
+
+
+def write_geocode_zip4_csv_to_sql(directory):
+    pass
+
 
 if __name__ == "__main__":
 
     #Geocode addresses
     extract_addresses_to_csv(workspace_path)
     geocode_addresses(workspace_path)
-    write_geocode_address_csv_to_sql(workspace_path)
+    #write_geocode_address_csv_to_sql(workspace_path)
 
 
 """
 alter table address add zip5 char(5);
 alter table address add zip4 char(4);
+alter table address add geocode_method varchar(15);
 create index idx_addr_hash on address(address_hash);
 
 update address set zip5 = left(postal_code, 5), zip4 = case when length(postal_code) = 9 then right(postal_code, 4) else NULL end;
