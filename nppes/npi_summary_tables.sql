@@ -32,7 +32,9 @@
    is_laboratory boolean,
    is_physician boolean,
    is_diagnostic_radiology boolean,
-   is_nuclear_radiology boolean
+   is_nuclear_radiology boolean,
+   latitude float,
+   longitude float
  ); 
  
 insert into npi_summary_taxonomy

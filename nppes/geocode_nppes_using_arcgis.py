@@ -10,25 +10,28 @@ We update records in the address table if the latitude is null
 
 We are using ArcGIS to do the Geocoding and using the Address Locators that are part of Arclogistics
 
-One of the issues that we have to deal with is that ArcGis can only update several records
+One of the issues that we have to deal with is that ArcGis cannot batch geoprocess millions of records.
 
 """
 
-import arcgisscripting
+
 import csv
 import math
 import os
 import pyodbc as odbc
 import glob
-
+import sys
+import json
 
 def logger(string_to_write=""):
     print(string_to_write)
 
-logger("Open GIS workspace")
 workspace_path = "E:\\data\\shapefiles\\"
-GP = arcgisscripting.create()
-GP.Workspace = workspace_path
+if "32 bit (Intel)" in sys.version:
+    import arcgisscripting
+    logger("Open GIS workspace")
+    GP = arcgisscripting.create()
+    GP.Workspace = workspace_path
 
 locator_base = "E:\\ProgramData\\ESRI\\ArcLogistics\\StreetData\\TANA2012_R1\\Locators\\"
 address_locator = locator_base + "Street_Addresses"
@@ -78,16 +81,62 @@ def geocode_addresses_to_csv(gis_workplace, locator, address_field_map, address_
 
             object_row = object_row_list.Next()
 
+def write_out_schema_ini(directory, dict):
+    """Schema.ini is a file format for specifying to the ODBC text driver the format of the field
+[us_zip4_1.csv]
+Col1=zip Text
+Col2=zip4 Text
+    """
+
+    with open(os.path.join(directory, "schema.ini"), "w") as fws:
+        for file_name in dict:
+            fws.write("[%s]\n" % file_name)
+            data = dict[file_name]
+            i = 1
+            for datum in data:
+                fws.write("Col%s=%s %s\n" % (i, datum[0], datum[1]))
+                i += 1
+
+
+def save_schema_in_json(directory, dict):
+    json_schema_file = os.path.join(directory, "schema.json")
+    with open(json_schema_file, "w") as fw:
+        json.dump(dict, fw)
+
+
+def load_schema_ini_from_json(directory):
+    json_schema_file = os.path.join(directory, "schema.json")
+
+    if os.path.exists(json_schema_file):
+        with open(json_schema_file, "r") as f:
+            return json.load(f)
+    else:
+        return {}
+
+
+def add_entry_into_schema_dict(dict, file_name, columns, mapping=None):
+    if mapping is None:
+        mapping = {}
+        for column in columns:
+            mapping[column] = "Text"
+
+    dict[file_name] = []
+    for column in columns:
+        dict[file_name] += [(column, mapping[column])]
+
+    return dict
+
 
 def get_new_cursor(dsn_name="nppes"):
     logger("Opening connection %s" % dsn_name)
-    connection = odbc.connect("DSN=%s" % dsn_name, autocommit=True)
+    connection = odbc.connect("DSN=%s" % dsn_name, autocommit=False)
     return connection.cursor()
 
 
 def extract_addresses_to_csv(directory, n=10000):
     cursor = get_new_cursor()
     header = ["address", "city", "state", "zip", "address_hash"]
+    schema_dict = load_schema_ini_from_json(directory)
     h = 0
     i = 0
     j = 1
@@ -110,9 +159,11 @@ def extract_addresses_to_csv(directory, n=10000):
 
         for row in cursor:
             if i % n == 0:
-                csv_file_name = os.path.join(directory, "us_addresses_%s.csv" % j)
-                logger("Writing file '%s'" % csv_file_name)
-                fwc = open(csv_file_name, "wb")
+                csv_file_name = "us_addresses_%s.csv" % j
+                schema_dict = add_entry_into_schema_dict(schema_dict, csv_file_name, header)
+                csv_full_file_name = os.path.join(directory, csv_file_name)
+                logger("Writing file '%s'" % csv_full_file_name)
+                fwc = open(csv_full_file_name, "wb")
                 csv_writer = csv.writer(fwc)
                 csv_writer.writerow(header)
                 j += 1
@@ -121,6 +172,9 @@ def extract_addresses_to_csv(directory, n=10000):
             csv_writer.writerow([row.address, row.city, row.state, row.zip, address_hash])
             i += 1
         h += 1
+
+    save_schema_in_json(directory, schema_dict)
+    write_out_schema_ini(directory, schema_dict)
 
 
 def extract_city_state_to_csv(directory):
@@ -134,41 +188,54 @@ def extract_city_state_to_csv(directory):
 
         cursor.execute("""select distinct city, state from address where country_code = 'US'""")
         for row in cursor:
-            csv_writer.write_row([row.city, row.state])
+            csv_writer.writerow([row.city, row.state])
 
 
 def extract_zip_to_csv(directory):
-    csv_file_name = os.path.join(directory, "us_zip.csv")
-    logger("Writing file '%s'" % csv_file_name)
-    with open(csv_file_name, "wb") as fwc:
+    csv_file_name = "us_zip.csv"
+    csv_full_file_name = os.path.join(directory, csv_file_name)
+    logger("Writing file '%s'" % csv_full_file_name)
+    with open(csv_full_file_name, "wb") as fwc:
         cursor = get_new_cursor()
         header = ["zip"]
+        schema_dict = load_schema_ini_from_json(directory)
+        schema_dict = add_entry_into_schema_dict(schema_dict, csv_file_name, header)
         csv_writer = csv.writer(fwc)
         csv_writer.writerow(header)
 
         cursor.execute("""select distinct zip5 as zip from address where country_code = 'US'""")
         for row in cursor:
-            csv_writer.write_row([row.zip])
+            csv_writer.writerow([row.zip])
+
+        save_schema_in_json(directory, schema_dict)
+        write_out_schema_ini(directory, schema_dict)
 
 
 def extract_zip4_to_csv(directory, n=10000):
     cursor = get_new_cursor()
     cursor.execute("""select distinct zip5 as zip, zip4 as zip4 from address where country_code = 'US'""")
 
+    schema_dict = load_schema_ini_from_json(directory)
+
     header = ["zip", "zip4"]
     i = 0
     j = 1
     for row in cursor:
         if i % n == 0:
-            csv_file_name = os.path.join(directory, "us_zip4_%s.csv" % j)
+            csv_file_name = "us_zip4_%s.csv" % j
+            csv_full_file_name = os.path.join(directory, csv_file_name)
             logger("Writing file '%s'" % csv_file_name)
-            fwc = open(csv_file_name, "wb")
-            csv_writer = csv.writer(fwc)
+            fwc = open(csv_full_file_name, "wb")
+            if csv_file_name in schema_dict:
+                schema_dict.pop(csv_file_name, None)
+            schema_dict = add_entry_into_schema_dict(schema_dict, csv_file_name, header)
+            csv_writer = csv.writer(fwc, dialect="excel", quoting=csv.QUOTE_ALL)
             csv_writer.writerow(header)
             j += 1
-
         csv_writer.writerow([row.zip, row.zip4])
         i += 1
+    save_schema_in_json(directory, schema_dict)
+    write_out_schema_ini(directory, schema_dict)
 
 
 def geocode_addresses(directory, file_pattern="us_address*.csv", replace_file=False):
@@ -182,14 +249,16 @@ def geocode_addresses(directory, file_pattern="us_address*.csv", replace_file=Fa
         logger(shapefile)
         file_exists = os.path.exists(geocoded_csv_file_name)
         if not file_exists or replace_file:
-            geocode_addresses_to_csv(GP, address_locator, address_field_map, csv_file, shapefile, geocoded_csv_file_name, ["address_ha", "match_addr", "address", "city", "state", "zip"])
+            geocode_addresses_to_csv(GP, address_locator, address_field_map, csv_file, shapefile, geocoded_csv_file_name,
+                                     ["address_ha", "match_addr", "address", "city", "state", "zip"])
 
 
 def geocode_city_state(directory):
     city_state_csv = os.path.join(directory, "us_city_state.csv")
     geocode_to_csv = os.path.join(directory, "geo_us_city_state.csv")
     shapefile = os.path.join(directory, "geo_us_city_state.shp")
-    geocode_addresses_to_csv(GP, city_state_locator, address_field_map, city_state_csv, shapefile, geocode_to_csv, ["city", "state"])
+    geocode_addresses_to_csv(GP, city_state_locator, address_field_map, city_state_csv, shapefile, geocode_to_csv,
+                             ["city", "state"])
 
 
 def geocode_zip(directory):
@@ -209,12 +278,12 @@ def geocode_zip4(directory, file_pattern="us_zip4*.csv", replace_file=False):
         shapefile = path_file + ".shp"
         logger(shapefile)
         file_exists = os.path.exists(geocoded_csv_file_name)
-        if file_exists == False or replace_file == True:
+        if not file_exists or replace_file:
             geocode_addresses_to_csv(GP, zip4_locator, zip4_field_map, csv_file, shapefile, geocoded_csv_file_name, ["zip", "zip4"])
 
 
-def write_geocode_address_csv_to_sql(directory, file_patterns="geo_us_address*.csv"):
-    geo_csv_files = glob.glob(os.path.join(directory, file_patterns))
+def write_geocode_address_csv_to_sql(directory, file_pattern="geo_us_address*.csv"):
+    geo_csv_files = glob.glob(os.path.join(directory, file_pattern))
     geo_sql_file = os.path.join(directory,"geo_us_addresses.sql")
 
     with open(geo_sql_file, "w") as fws:
@@ -222,29 +291,97 @@ def write_geocode_address_csv_to_sql(directory, file_patterns="geo_us_address*.c
             with open(geo_csv_file, "rb") as fc:
                 geo_csv_dict = csv.DictReader(fc)
                 for geo_dict in geo_csv_dict:
-                    fws.write("update address set latitude = %s, longitude = %s, geocode_method = 'address' where address_hash = '%s'"";\n\n"
+                    fws.write("""update address set latitude = %s, longitude = %s, geocode_method = 'address'
+                              where address_hash='%s' and latitude is null;\n"""
                               % (geo_dict["Y"], geo_dict["X"], geo_dict["address_ha"]))
 
 
 def write_geocode_city_state_csv_to_sql(directory):
-    pass
+    geo_csv_file = os.path.join(directory, "geo_us_city_state.csv")
+    geo_sql_file = os.path.join(directory, "geo_us_city_state.sql")
+
+    with open(geo_sql_file, "w") as fws:
+        with open(geo_csv_file, "r") as fc:
+            geo_csv_dict = csv.DictReader(fc)
+            for geo_dict in geo_csv_dict:
+                sql_query = "update address set latitude = %s, longitude = %s, geocode_method = 'city_state'" % (geo_dict["Y"],
+                                                                                                          geo_dict["X"])
+                sql_query += " where city = '%s' and state = '%s'" % (geo_dict["city"], geo_dict["state"])
+                sql_query += "and latitude is not null;\n"
+                fws.write(sql_query)
 
 
 def write_geocode_zip_csv_to_sql(directory):
-    pass
+    geo_csv_file = os.path.join(directory, "geo_us_zip.csv")
+    geo_sql_file = os.path.join(directory, "geo_us_zip.sql")
+
+    with open(geo_sql_file, "w") as fws:
+        with open(geo_csv_file, "r") as fc:
+            geo_csv_dict = csv.DictReader(fc)
+            for geo_dict in geo_csv_dict:
+                sql_query = "update address set latitude = %s, longitude = %s, geocode_method = 'zip'" % (geo_dict["Y"], geo_dict["X"])
+                sql_query += " where zip5 = '%s' and latitude is not null;\n" % geo_dict["zip"]
+                fws.write(sql_query)
 
 
-def write_geocode_zip4_csv_to_sql(directory):
-    pass
+def write_geocode_zip4_csv_to_sql(directory, file_pattern = "geo_us_zip4*.csv"):
+    geo_csv_files = glob.glob(os.path.join(directory, file_pattern))
+    geo_sql_file = os.path.join(directory,"geo_us_zip4.sql")
 
+    with open(geo_sql_file, "w") as fws:
+        for geo_csv_file in geo_csv_files:
+            with open(geo_csv_file, "rb") as fc:
+                geo_csv_dict = csv.DictReader(fc)
+                for geo_dict in geo_csv_dict:
+                    fws.write("""update address set latitude = %s, longitude = %s, geocode_method = 'zip4'
+                              where zip5 = '%s' and zip4 = '%s' and latitude is null;\n"""
+                              % (geo_dict["Y"], geo_dict["X"], geo_dict["zip"], geo_dict["zip4"]))
+
+
+def execute_sql_script(directory, sql_script_name, starting_i=0):
+    cursor = get_new_cursor()
+    with open(os.path.join(directory, sql_script_name), "r") as f:
+        sql_script = f.read()
+        i = 0
+        statements = sql_script.split(";")
+        logger("Script contains %s statements" % len(statements))
+        for statement in statements:
+
+            if i >= starting_i:
+                cursor.execute(statement.strip())
+
+            if i % 5000 == 0:
+                print(i)
+                cursor.commit()
+
+            i += 1
 
 if __name__ == "__main__":
 
     #Geocode addresses
-    extract_addresses_to_csv(workspace_path)
-    geocode_addresses(workspace_path)
-    #write_geocode_address_csv_to_sql(workspace_path)
 
+    #geo_us_addresses_1 8999 records
+    #extract_addresses_to_csv(workspace_path)
+    #geocode_addresses(workspace_path, replace_file=False)
+    #write_geocode_address_csv_to_sql(workspace_path)
+    #execute_sql_script(workspace_path, "geo_us_addresses.sql")
+
+    #extract_zip4_to_csv(workspace_path)
+    #geocode_zip4(workspace_path)
+    #write_geocode_zip4_csv_to_sql(workspace_path)
+    #execute_sql_script(workspace_path, "geo_us_zip4.sql")
+
+    #extract_zip_to_csv(workspace_path)
+    #geocode_zip(workspace_path)
+    #write_geocode_zip_csv_to_sql(workspace_path)
+    #execute_sql_script(workspace_path, "geo_us_zip.sql")
+
+    #extract_city_state_to_csv(workspace_path)
+    #geocode_city_state(workspace_path)
+    write_geocode_city_state_csv_to_sql(workspace_path)
+    #execute_sql_script(workspace_path, "geo_us_city_state.sql")
+
+    print()
 
 """
 alter table address add zip5 char(5);
