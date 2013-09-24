@@ -326,7 +326,7 @@ def write_geocode_zip_csv_to_sql(directory):
 
 def write_geocode_zip4_csv_to_sql(directory, file_pattern = "geo_us_zip4*.csv"):
     geo_csv_files = glob.glob(os.path.join(directory, file_pattern))
-    geo_sql_file = os.path.join(directory,"geo_us_zip4.sql")
+    geo_sql_file = os.path.join(directory, "geo_us_zip4.sql")
 
     with open(geo_sql_file, "w") as fws:
         for geo_csv_file in geo_csv_files:
@@ -369,7 +369,7 @@ if __name__ == "__main__":
     #extract_zip4_to_csv(workspace_path)
     #geocode_zip4(workspace_path)
     #write_geocode_zip4_csv_to_sql(workspace_path)
-    #execute_sql_script(workspace_path, "geo_us_zip4.sql")
+    execute_sql_script(workspace_path, "geo_us_zip4.sql", 1085000)
 
     #extract_zip_to_csv(workspace_path)
     #geocode_zip(workspace_path)
@@ -378,10 +378,10 @@ if __name__ == "__main__":
 
     #extract_city_state_to_csv(workspace_path)
     #geocode_city_state(workspace_path)
-    write_geocode_city_state_csv_to_sql(workspace_path)
+    #write_geocode_city_state_csv_to_sql(workspace_path)
     #execute_sql_script(workspace_path, "geo_us_city_state.sql")
 
-    print()
+
 
 """
 alter table address add zip5 char(5);
