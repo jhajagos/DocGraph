@@ -361,36 +361,30 @@ if __name__ == "__main__":
     #Geocode addresses
 
     #geo_us_addresses_1 8999 records
-    #extract_addresses_to_csv(workspace_path)
-    #geocode_addresses(workspace_path, replace_file=False)
-    #write_geocode_address_csv_to_sql(workspace_path)
-    #execute_sql_script(workspace_path, "geo_us_addresses.sql")
+    extract_addresses_to_csv(workspace_path)
+    geocode_addresses(workspace_path, replace_file=False)
+    write_geocode_address_csv_to_sql(workspace_path)
+    execute_sql_script(workspace_path, "geo_us_addresses.sql")
 
-    #extract_zip4_to_csv(workspace_path)
-    #geocode_zip4(workspace_path)
-    #write_geocode_zip4_csv_to_sql(workspace_path)
-    execute_sql_script(workspace_path, "geo_us_zip4.sql", 1085000)
+    extract_zip4_to_csv(workspace_path)
+    geocode_zip4(workspace_path)
+    write_geocode_zip4_csv_to_sql(workspace_path)
+    execute_sql_script(workspace_path, "geo_us_zip4.sql")
 
-    #extract_zip_to_csv(workspace_path)
-    #geocode_zip(workspace_path)
-    #write_geocode_zip_csv_to_sql(workspace_path)
-    #execute_sql_script(workspace_path, "geo_us_zip.sql")
+    extract_zip_to_csv(workspace_path)
+    geocode_zip(workspace_path)
+    write_geocode_zip_csv_to_sql(workspace_path)
+    execute_sql_script(workspace_path, "geo_us_zip.sql")
 
-    #extract_city_state_to_csv(workspace_path)
-    #geocode_city_state(workspace_path)
-    #write_geocode_city_state_csv_to_sql(workspace_path)
-    #execute_sql_script(workspace_path, "geo_us_city_state.sql")
+    extract_city_state_to_csv(workspace_path)
+    geocode_city_state(workspace_path)
+    write_geocode_city_state_csv_to_sql(workspace_path)
+    execute_sql_script(workspace_path, "geo_us_city_state.sql")
 
 
 
 """
-alter table address add zip5 char(5);
-alter table address add zip4 char(4);
-alter table address add geocode_method varchar(15);
-create index idx_addr_hash on address(address_hash);
-
-update address set zip5 = left(postal_code, 5), zip4 = case when length(postal_code) = 9 then right(postal_code, 4) else NULL end;
-
+Some counts for analysis
 
 select distinct zip5, zip4 from address;
 --1563006
