@@ -12,12 +12,12 @@ create table rx_graph_brand_name (id integer not null auto_increment,
   gross_drug_cost_sum Float,
    primary key(id));
 
-LOAD DATA INFILE '/tmp/brooklyn_core_edge_list_with_weights.csv' INTO TABLE provider_directed_graph
+
+LOAD DATA INFILE '/tmp/npi_bn.csv' INTO TABLE rx_graph_brand_name
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
       LINES TERMINATED BY '\n'
       IGNORE 1 LINES
-       (@npi @brand_name, @claim_count, @claim_count_raw, @claim_count_raw, @claim_count_compound, @quantity_sum,
-       day_supply_sum, @gross_drug_cost_sum)
+       (@npi, @brand_name, @claim_count, @claim_count_raw, @claim_count_compound, @quantity_sum, @day_supply_sum, @gross_drug_cost_sum)
        set
         npi = case @npi when '' then NULL else @npi end,
         brand_name = case @brand_name when '' then NULL else @brand_name end,

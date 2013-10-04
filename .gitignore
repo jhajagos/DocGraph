@@ -15,7 +15,8 @@ local.properties
 .classpath
 .settings/
 .loadpath
-
+/graph_csv/*
+/graphml_files/*
 
 # External tool builders
 .externalToolBuilders/

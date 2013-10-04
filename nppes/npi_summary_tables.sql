@@ -34,7 +34,8 @@
    is_diagnostic_radiology boolean,
    is_nuclear_radiology boolean,
    latitude float,
-   longitude float
+   longitude float,
+   geocode_method varchar(15)
  ); 
  
 insert into npi_summary_taxonomy
@@ -59,7 +60,10 @@ insert into npi_summary_taxonomy
     is_laboratory,
     is_physician,
     is_diagnostic_radiology,
-    is_nuclear_radiology
+    is_nuclear_radiology,
+    latitude,
+    longitude,
+    geocode_method
   )
  select fp.*,
    concat(pt1.provider_type,
@@ -85,16 +89,19 @@ insert into npi_summary_taxonomy
     is_laboratory,
     is_physician,
     is_diagnostic_radiology,
-    is_nuclear_radiology
-  from 
+    is_nuclear_radiology,
+    a.latitude,
+    a.longitude,
+    a.geocode_method
+  from
   (
     select nh1.npi as npi,nh1.Provider_Business_Practice_Location_Address_State_Name as state,
       nh1.Provider_Business_Practice_Location_Address_Postal_Code as zip, nh1.Provider_Business_Practice_Location_Address_City_Name as city,
       nh1.Is_Sole_Proprietor as sole_provider,
-      case 
+      case
         when nh1.Provider_Organization_Name_Legal_Business_Name is not null then nh1.Provider_Organization_Name_Legal_Business_Name
-          else concat(rtrim(nh1.Provider_Last_Name_Legal_Name),', ',rtrim(nh1.Provider_First_Name),' ', 
-            if(nh1.provider_credential_text is null,'',nh1.provider_credential_text))  
+          else concat(rtrim(nh1.Provider_Last_Name_Legal_Name),', ',rtrim(nh1.Provider_First_Name),' ',
+            if(nh1.provider_credential_text is null,'',nh1.provider_credential_text))
       end as provider_name,pl1.sequence_id,
       pl1.Healthcare_Provider_Taxonomy_Code as taxonomy_code
      from npi.nppes_header nh1
@@ -102,12 +109,13 @@ insert into npi_summary_taxonomy
       ) fp
      left outer join npi.healthcare_provider_taxonomies pt1 on pt1.taxonomy_code = fp.taxonomy_code
      left outer join npi.healthcare_provider_taxonomy_processed hptp on hptp.npi = fp.npi
-     ;
+     join npi.nppes_contact nc on nc.npi = fp.npi and nc.address_type = 'practice'
+     join npi.address a on a.address_hash = nc.address_hash;
 
   update npi_summary_taxonomy set zip5 = left(zip, 5);
 
   create index idx_npi_summary on npi_summary_taxonomy (npi);
-
+  drop view npi_summary_primary_taxonomy;
   create view npi_summary_primary_taxonomy as
     select * from
   npi_summary_taxonomy where sequence_id = 1;
