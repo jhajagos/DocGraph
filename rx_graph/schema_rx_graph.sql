@@ -1,5 +1,5 @@
 
-drop table if exists provider_directed_graph;
+drop table if exists rx_graph_brand_name;
 
 create table rx_graph_brand_name (id integer not null auto_increment,
   npi char(10),
@@ -27,3 +27,36 @@ LOAD DATA INFILE '/tmp/npi_bn.csv' INTO TABLE rx_graph_brand_name
         quantity_sum = case @claim_count_compound when '' then NULL else @claim_count_compound end,
         day_supply_sum = case @day_supply_sum when '' then NULL else @day_supply_sum end,
         gross_drug_cost_sum = case @gross_drug_cost_sum when '' then NULL else @gross_drug_cost_sum end;
+
+
+drop table if exists rx_graph_ndc9_rxcui;
+
+create table rx_graph_ndc9_rxcui (id integer not null auto_increment,
+npi char(10),
+NDC9 char(9),
+rxcui varchar(16),
+rxcui_name varchar(1023),
+claim_count  Integer,
+claim_count_daw1  Integer,
+claim_count_cmpnd2  Integer,
+quantity_sum  Integer,
+day_supply_sum Integer,
+gross_drug_cost_sum DOUBLE,
+primary key(id));
+
+LOAD DATA INFILE '/tmp/npi_bn.csv' INTO TABLE rx_graph_brand_name
+      FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
+      LINES TERMINATED BY '\n'
+      IGNORE 1 LINES
+       (@npi, @NDC9, @claim_count, @claim_count_daw1, @claim_count_cmpnd2, @quantity_sum, @day_supply_sum, @gross_drug_cost_sum)
+       set
+        npi = case @npi when '' then NULL else @npi end,
+        ndc9 = case @brand_name when '' then NULL else @ndc9 end,
+        claim_count = case @claim_count when '' then NULL else @claim_count end,
+        claim_count_raw = case @claim_count_raw when '' then NULL else @claim_count_raw end,
+        claim_count_compound = case @claim_count_compound when '' then NULL else @claim_count_compound end,
+        quantity_sum = case @claim_count_compound when '' then NULL else @claim_count_compound end,
+        day_supply_sum = case @day_supply_sum when '' then NULL else @day_supply_sum end,
+        gross_drug_cost_sum = case @gross_drug_cost_sum when '' then NULL else @gross_drug_cost_sum end;
+
+
