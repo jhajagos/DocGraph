@@ -200,3 +200,42 @@ create unique index idx_uniq_ndc_dd on rxnorm_prescribe.ndc_drug_details(ndc);
  
  
 select * from rxnorm_prescribe.ndc_drug_details;
+
+
+/* Build Ingredient Tables Linking to Component Tables */
+
+drop table rxnorm_prescribe.ingredient1;
+
+create table rxnorm_prescribe.ingredient1 as
+  select r1.rxaui as in_rxaui, r1.rxcui as in_rxcui, TTY, r1.str as ingredient, 
+    rs1.atv as rxn_activated, rs2.ATV as rxn_obsoleted, rs3.ATV as unii_code
+    from rxnorm.rxnconso r1 
+    left outer join rxnorm.rxnsat rs1 on rs1.rxaui = r1.rxaui and rs1.ATN = 'RXN_ACTIVATED'
+    left outer join rxnorm.rxnsat rs2 on rs2.rxaui = r1.rxaui and rs2.ATN ='RXN_OBSOLETED'
+    left outer join rxnorm.rxnsat rs3 on rs3.rxaui = r1.rxaui and rs3.ATN ='UNII_CODE'
+    where r1.SAB = 'RXNORM' and r1.TTY in ('IN');
+    
+
+drop table rxnorm_prescribe.ingredient2;
+ 
+create table rxnorm_prescribe.ingredient2 as
+  select i1.*, related_form, pin_rxaui, pin_rxcui from rxnorm_prescribe.ingredient1 i1 left outer join 
+    (select r1.rxcui as in_rxcui, r1.rxaui as in_rxaui, rr1.rela, r2.str as related_form, 
+      r2.tty, r2.rxcui as pin_rxcui, r2.rxcui as pin_rxaui from rxnorm.rxnconso r1 
+      join rxnorm.rxnrel rr1 on rr1.rxcui1 = r1.rxcui
+      join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.SAB = 'RXNORM' and rr1.RELA = 'form_of'
+      where r1.SAB='RXNORM' and r1.tty in ('IN')) t on t.in_rxaui = i1.in_rxaui;
+      
+create table rxnorm_prescribe.relation_between_ingredient_component1
+ select r1.str as ingredient, r1.rxcui as in_rxcui, r1.rxaui as in_rxaui, rr1.rela, 
+  r2.str as semantic_clinical_drug_component, r2.tty, r2.rxaui as scdc_rxaui, r2.rxcui as scdc_rxcui 
+  from rxnorm.rxnconso r1 
+    join rxnorm.rxnrel rr1 on r1.rxcui = rr1.rxcui1
+    join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.SAB = 'RXNORM' and r2.tty = 'SCDC'
+    where r1.SAB = 'RXNORM' and r1.TTY = 'IN';
+
+create table rxnorm_prescribe.relation_between_ingredient_clinical_drug1 as     
+ select distinct ric.*, rr1.rela as rela1, r2.RXCUI as scd_rxcui, r2.RXAUI as scd_rxaui, r2.STR as semantic_clinical_drug 
+  from rxnorm_prescribe.relation_between_ingredient_component1 ric 
+  join rxnorm.rxnrel rr1 on ric.scdc_rxcui = rr1.RXCUI1
+  join rxnorm.rxnconso r2 on r2.rxcui = rr1.RXCUI2 and r2.TTY = 'SCD';
