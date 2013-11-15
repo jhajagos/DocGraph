@@ -178,17 +178,38 @@ create table rxnorm_prescribe.generic_name2 as
    gn.ingredient as generic_name
      from rxnorm_prescribe.generic_name1 gn;
 
+drop table if exists rxnorm_prescribe.dose_form_to_dose_form_group;
+
+create table rxnorm_prescribe.dose_form_to_dose_form_group as
+  select t.df_rxaui as dose_form_rxaui, t.dose_form, count(*) as counter, 
+    group_concat(distinct dfg_rxcui order by dfg_rxcui asc separator '|') as synthetic_dfg_rxcui,
+    group_concat(distinct dfg_rxaui order by dfg_rxaui asc separator '|') as synthetic_dfg_rxaui,
+    group_concat(distinct dose_form_group order by dfg_rxaui asc separator '|') as synthetic_dose_form_group
+    from (select distinct r2.rxcui as dose_rxcui, r2.rxaui as df_rxaui, r2.str as dose_form, 
+      r1.rxcui as dfg_rxcui, r1.rxaui as dfg_rxaui, r1.str as dose_form_group  
+    from rxnorm.rxnconso r1 join rxnorm.rxnrel rr1 on r1.rxcui = rr1.RXCUI1
+      join rxnorm.rxnconso r2 on r2.rxcui = rr1.RXCUI2 where r1.SAB = 'RXNORM' and r2.SAB = 'RXNORM'
+      and r1.TTY = 'DFG' and r2.TTY='DF') t group by t.df_rxaui, t.dose_form
+      order by synthetic_dose_form_group, dose_form;
+
+drop table if exists rxnorm_prescribe.drug_details;
+
 create table rxnorm_prescribe.drug_details as      
-  select rs4.SBD_RXCUI as sbd_rxcui, rs4.SBD_RXAUI as sbd_rxaui, rs4.semantic_branded_name,
+ select rs4.SBD_RXCUI as sbd_rxcui, rs4.SBD_RXAUI as sbd_rxaui, rs4.semantic_branded_name,
     rs4.rxn_available_string, 
     rs4.rxterm_form, rs4.rxn_human_drug, rs4.SAB, rs4.TTY, rs4.SUPPRESS, 
     rs4.bn_rxaui, rs4.bn_rxcui, rs4.brand_name, rs4.dose_form_rxaui, rs4.dose_form_rxcui, 
     rs4.dose_form, rs4.scd_rxaui, rs4.scd_rxcui, rs4.semantic_clinical_drug,
     gn2.number_of_ingredients, gn2.scdc_rxcui, gn2.scdc_rxaui, 
-    gn2.semantic_clinical_drug_component, gn2.generic_name_rxcui, gn2.generic_name_rxaui, gn2.generic_name
-from rxnorm_prescribe.rxnorm_sbd4 rs4 join rxnorm_prescribe.generic_name2 gn2 on rs4.SBD_RXAUI = gn2.SBD_RXAUI;
+    gn2.semantic_clinical_drug_component, gn2.generic_name_rxcui, gn2.generic_name_rxaui, gn2.generic_name,
+    dfdfg.counter as dose_form_group_counter, dfdfg.synthetic_dfg_rxcui, dfdfg.synthetic_dfg_rxaui, dfdfg.synthetic_dose_form_group
+  from rxnorm_prescribe.rxnorm_sbd4 rs4 
+  join rxnorm_prescribe.generic_name2 gn2 on rs4.SBD_RXAUI = gn2.SBD_RXAUI
+  left outer join rxnorm_prescribe.dose_form_to_dose_form_group dfdfg on dfdfg.dose_form_rxaui = rs4.dose_form_rxaui
+  ;
+ /*  */
 
-drop table rxnorm_prescribe.ndc_drug_details;
+drop table if exists rxnorm_prescribe.ndc_drug_details;
 
 create table rxnorm_prescribe.ndc_drug_details as    
   select distinct left(rs.ATV,11) as ndc, dd.*, now() as created_at 
@@ -201,6 +222,7 @@ create unique index idx_uniq_ndc_dd on rxnorm_prescribe.ndc_drug_details(ndc);
  
 select * from rxnorm_prescribe.ndc_drug_details;
 
+/* 39369 */
 
 /* Build Ingredient Tables Linking to Component Tables */
 
