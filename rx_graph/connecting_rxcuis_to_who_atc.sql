@@ -233,10 +233,15 @@ delete from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui3 where rxn_human_dr
  
  /*Enemas and rectal foams for treatment of e.g. ulcerative colitis are classified here. Oral budesonide for treatment of morbus Crohn is also classified here. */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui3
+select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui3;
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'A07EA' and 
-  (dose_form like ('Rectal%') or dose_form like 'Enema%');
+drop table if exists rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated;
+
+create table rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated as 
+  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,
+    1 as step
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'A07EA' and synthetic_dose_form_group
+      like 'Rectal%';
 
 
 /* 
@@ -253,7 +258,10 @@ Preparations for the treatment of throat infections, (lozenges for common cold c
 
 Preparations containing local anesthetics, see N01B - Anesthetics, local, and R02AD - Anesthetics, local */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'A01A' and dose_form in ('Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge');
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 2 as step 
+     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'A01A' and dose_form in ('Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste');
 
 /*
 This group comprises plain antacid drugs, antacids in combination with antiflatulents and antacids in combination with other drugs.
@@ -264,9 +272,12 @@ Antacids in combination with liquorice root or linseed are classified in this gr
 Plain antiflatulents, see A03AX - Other drugs for functional gastrointestinal disorders.
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A02' and dose_form not in ('Prefilled Applicator','Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution');
-
-/*
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 4 as step 
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A02' and synthetic_dose_form_group not like 'Injectable Product%'
+    and synthetic_dose_form_group like 'Oral Product%'; 
+ /* 
 Unsure about
 2541	A02BA01	A02BA	A02B	A02	A	cimetidine	H2-receptor antagonists	DRUGS FOR PEPTIC ULCER AND GASTRO-OESOPHAGEAL REFLUX DISEASE (GORD)	DRUGS FOR ACID RELATED DISORDERS	ALIMENTARY TRACT AND METABOLISM	Injectable Solution	US	Sol	1
 283742	A02BC05	A02BC	A02B	A02	A	esomeprazole	Proton pump inhibitors	DRUGS FOR PEPTIC ULCER AND GASTRO-OESOPHAGEAL REFLUX DISEASE (GORD)	DRUGS FOR ACID RELATED DISORDERS	ALIMENTARY TRACT AND METABOLISM	Injectable Solution	US	Sol	1
