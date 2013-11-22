@@ -274,7 +274,7 @@ Plain antiflatulents, see A03AX - Other drugs for functional gastrointestinal di
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 4 as step 
+  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 3 as step 
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A02' and synthetic_dose_form_group not like 'Injectable Product%'
     and synthetic_dose_form_group like 'Oral Product%'; 
  /* 
@@ -286,107 +286,167 @@ Unsure about
 9143	A02BA02	A02BA	A02B	A02	A	ranitidine	H2-receptor antagonists	DRUGS FOR PEPTIC ULCER AND GASTRO-OESOPHAGEAL REFLUX DISEASE (GORD)	DRUGS FOR ACID RELATED DISORDERS	ALIMENTARY TRACT AND METABOLISM	Injectable Solution	US	Sol	1
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A03' and dose_form not in ('Prefilled Applicator','Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment');
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 4 as step from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A03' and
+  synthetic_dose_form_group like 'Oral Product%';
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A04' and dose_form not in ('Prefilled Applicator','Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution');
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 5 as step 
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A04' 
+  and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable%' or synthetic_dose_form_group like '%Topical%');
 
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A05' and dose_form not in ('Prefilled Applicator','Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution');
 /* no records */
 
 /* DRUGS FOR CONSTIPATION */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A06' and dose_form not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 'Injectable Suspension'
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 6 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A06' 
+  and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Rectal Product%'
 );
 
 /*ANTIDIARRHEALS, INTESTINAL ANTIINFLAMMATORY/ANTIINFECTIVE AGENTS*/
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A07' and atc4 != 'A07EA' and dose_form not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
-'Injectable Suspension', 'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository'
-);
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 7 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A07' and (synthetic_dose_form_group like 'Oral Product%');
+  
 
 /* Antiobesity */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A08' and dose_form not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
- 'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository'
-);
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A09' and dose_form not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
-'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository'
-);
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 8 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A08' and (synthetic_dose_form_group like 'Oral Product%');
+
+/* Enzymes */
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 9 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A09' and (synthetic_dose_form_group like 'Oral Product%');
 
 /* Diabetes drugs */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A10';
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 10 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A10' and 
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
 /* Vitamins */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A11' and dose_form
-not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
-'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository'
-);
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 11 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A11' and (synthetic_dose_form_group like 'Oral Product%');
+;
 
 /* MINERAL SUPPLEMENTS */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A12' and dose_form
-not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
-'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository', 'Nasal Solution', 'Nasal Gel'
-);
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 12 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A12' and (synthetic_dose_form_group like 'Oral Product%');
 
 
+/* A13 TONICS*/
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A13';
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A14';
+/* A14 Anabolic Steroids*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 13 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A14' and (synthetic_dose_form_group like 'Oral Product%');
+
+/* Appetite stimulators */
 
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A15';
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B01';
+
+
+/*B01 ANTITHROMBOTIC AGENTS*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 14 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B01' and 
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
 
 /* epinephrine */
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B02' not in ('Metered Dose Inhaler', 'Nasal Spray', 'Topical Solution', 'Topical Spray','Transdermal Patch');
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B02' and 
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+  
+  
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B03' and 
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B03';
+
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B04';
+
+/*
+B05A BLOOD AND RELATED PRODUCTS
+B05B I.V. SOLUTIONS
+
+This group comprises i.v. solutions used in parenteral administration of fluids, electrolytes and nutrients. Agents administered as i.v. solutions or additives, see the respective therapeutic groups. I.v. solution additives, see B05X.
+
+B05C IRRIGATING SOLUTIONS
+
+In this group products used for bladder irrigation, surgical irrigation, incl. instruments etc. are classified. See also V07AB - Solvents and diluting agents, incl. irrigating solutions.
+
+Combined preparations are classified by using 5th level - 10. Only plain preparations are classified at the other 5th levels.
+
+B05D PERITONEAL DIALYTICS
+B05X I.V. SOLUTION ADDITIVES
+
+I.v. solution additives are concentrated preparations containing substances used for correcting fluid and electrolyte balance and nutritional status. Drugs administered as i.v. solutions or additives, see the respective groups.
+
+B05Z HEMODIALYTICS AND HEMOFILTRATES
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 16 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05A' and 
+  (synthetic_dose_form_group like 'Injectable Product%');
+  
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 17 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05B' and 
+  (synthetic_dose_form_group like 'Injectable Product%');
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 18 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05C' and 
+  (synthetic_dose_form_group like 'Irrigation Product%');
 
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B04';
-
-/* TODO IV needs to be done separately */
-
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B05' and dose_form
-not in ('Mouthwash', 'Oral Gel', 'Oral Paste', 
-'Oral Foam', 'Toothpaste', 'Chewing Gum', 'Lozenge', 'Irrigation Solution','Topical Ointment', 'Ophthalmic Solution', 
-'Oral Spray', 'Injectable Solution', 'Nasal Spray', 'Ophthalmic Gel', 'Ophthalmic Ointment', 'Mucosal Spray', 
-'Otic Solution', 'Otic Suspension','Augmented Topical Cream', 'Augmented Topical Lotion', 'Augmented Topical Ointment',
-'Dry Powder Inhaler', 'Inhalant Solution', 'Medicated Pad', 'Medicated Shampoo', 'Metered Dose Inhaler', 'Nasal Inhaler', 'Ophthalmic Suspension',
-'Otic Suspension','Powder Spray', 'Prefilled Applicator', 'Topical Cream', 'Topical Foam', 'Topical Gel', 'Topical Lotion', 'Topical Powder',
-'Topical Solution', 'Topical Spray', 'Vaginal Cream', 'Vaginal Suppository', 'Nasal Solution', 'Nasal Gel','Paste', 'Rectal Suppository',
-'Ophthalmic Irrigation Solution', 'Medicated Liquid Soap', 'Drug Implant'
-);
 
 /*
 C CARDIOVASCULAR SYSTEM
 
 C01 CARDIAC THERAPY
+
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 19 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C01' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+/*
 C02 ANTIHYPERTENSIVES
 
 See also C03 - Diuretics, C07 - Beta blocking agents, C08 - Calcium channel blockers and C09 - Agents acting on the renin-angiotensin system.
@@ -404,9 +464,17 @@ C02N Combinations of antihypertensives in ATC gr. C02
 The oral DDDs are based on the average doses needed to reduce the blood pressure to a normal level in patients with mild-moderate hypertension.
 
 Parenteral DDDs are based on dosages used for the treatment of hypertensive crises and are based on the content of the active ingredient pr. vial (ampoule).
+*/
 
-C03 DIURETICS
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 20 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C02' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
+
+/* C03 DIURETICS */
+/*
 This group comprises diuretics, plain and in combination with potassium or other agents. Vasopressin antagonists are also included in this group. Potassium-sparing agents are classified in C03D and C03E.
 
 Combinations with digitalis glycosides, see C01AA.
@@ -419,19 +487,66 @@ Combinations with calcium channel blockers, see C08.
 
 Combinations with agents acting on the renin angiotensin system, see C09B and C09D.
 
-
 The DDDs for diuretics are based on monotherapy. Most diuretics are used both for the treatment of edema and hypertension in similar doses and the DDDs are therefore based on both indications.
 
 The DDDs for combinations correspond to the DDD for the diuretic component, except for ATC group C03E, see comments under this level.
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 21 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C03' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+/*
 C04 PERIPHERAL VASODILATORS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 22 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C04' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+
+/*
 C05 VASOPROTECTIVES
 
 No DDDs are established in this group, since most of the drugs in this group are for topical use.
+*/
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 23 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C05' and
+  (synthetic_dose_form_group like  'Rectal Product%');
+
+/*
 C07 BETA BLOCKING AGENTS
-C08 CALCIUM CHANNEL BLOCKERS
+*/
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 24 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C07' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+/*
+C08 CALCIUM CHANNEL BLOCKERS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 25 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C08' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+/*
 The calcium channel blockers are classified according to selectivity of calcium channel activity and direct cardiac effects. The ATC 4th levels are subdivided according to chemical structure.
 
 Combinations with ergot alkaloids (C04AE) are classified in this group by using the 50-series.
@@ -451,13 +566,19 @@ C09 AGENTS ACTING ON THE RENIN-ANGIOTENSIN SYSTEM
 The DDDs are based on the treatment of mild-moderate hypertension.
 
 See comments to C02L concerning the principles for assignment of DDDs for combined preparations.
+*/
 
+/*
 C10 LIPID MODIFYING AGENTS
 
 The DDDs are based on the treatment of hypercholesterolemia.
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C10';
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 26 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C10' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
 /*
 D DERMATOLOGICALS
@@ -469,28 +590,105 @@ Only oral preparations in ATC group D are given DDDs. Most products in this grou
 
 D01 ANTIFUNGALS FOR DERMATOLOGICAL USE
 
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 27 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D01A' and
+      (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%');
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 28 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D01B' and
+    (synthetic_dose_form_group like 'Oral Product%');
+/*
+
 This group comprises preparations for topical and systemic treatment of dermatological mycoses. Preparations with systemic antimycotic effect, see also J02A - Antimycotics for systemic use.
 
 Topical preparations used especially in gynecological infections are classified in G01A - Antiinfectives and antiseptics, excl. combinations with corticosteroids or G01B - Antiinfectives/antiseptics in combination with corticosteroids. Preparations for local treatment of fungal infections in the mouth, see A01AB - Antiinfectives and antiseptics for local oral treatment.
 
+/*
 D02 EMOLLIENTS AND PROTECTIVES
-D03 PREPARATIONS FOR TREATMENT OF WOUNDS AND ULCERS
 
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 29 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D02' and
+          (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
+          synthetic_dose_form_group like 'Prefilled Applicator Product%');
+
+
+/*
+D03 PREPARATIONS FOR TREATMENT OF WOUNDS AND ULCERS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 30 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D03' and
+                   (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
+          synthetic_dose_form_group like 'Prefilled Applicator Product%');
+
+/*
 Topical preparations used in the treatment of wounds and ulcers, e.g. leg ulcers, are classified in this group. Protective ointments are classified in D02A - Emollients and protectives.
 
 See also
 D06 - Antibiotic and chemotherapeutics for dermatological use.
 D08 - Antiseptics and disinfectants.
 D09 - Medicated dressings.
+*/
+/*
+D04 ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC. */
 
-D04 ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC.
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 31 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D04' and
+                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
+          synthetic_dose_form_group like 'Prefilled Applicator Product%');
+;
+/*
+/*
 D05 ANTIPSORIATICS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 32 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D05' and
+                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
+          synthetic_dose_form_group like 'Prefilled Applicator Product%');
+
+
+/*
 D06 ANTIBIOTICS AND CHEMOTHERAPEUTICS FOR DERMATOLOGICAL USE
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 33 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D06' and
+                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
+          synthetic_dose_form_group like 'Prefilled Applicator Product%');
+
+/*
 This group comprises products for topical use in skin infections etc.
-
+*/
+/*
 D07 CORTICOSTEROIDS, DERMATOLOGICAL PREPARATIONS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 34 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D07' and
+                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' );
+
+/*
 As a main rule, all topical corticosteroid preparations should be classified in this group. There are, however, some few exceptions:
 
 Combinations of corticosteroids and antiinfectives for gynaecological use, see G01B.
@@ -502,24 +700,61 @@ Anti-acne preparations, see D10A.
 Antihemorrhoidals with corticosteroids, see C05AA.
 
 Corticosteroids for ophthalmological or otological use, see S - Sensory organs.
-
+*/
+/*
 D08 ANTISEPTICS AND DISINFECTANTS
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 35 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D08' and
+                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%'
+                    or synthetic_dose_form_group like 'Soap Product%'
+                    );
+
+/*
 D09 MEDICATED DRESSINGS
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 36 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D09' and
+                    (synthetic_dose_form_group like '%Medicated Pad%');
+/*
 D10 ANTI-ACNE PREPARATIONS
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'D'; /* detailed */
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,37 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D10A' and
+      (synthetic_dose_form_group like 'Topical Product%'
+      or synthetic_dose_form_group like 'Prefilled Applicator%');
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D01A' and dose_form like '%Topical%';
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D07' and dose_form like '%Topical%';
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 38 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D10B' and
+    (synthetic_dose_form_group like 'Oral Product%');
+
 
 /*
 
 G GENITO URINARY SYSTEM AND SEX HORMONES
-
+*/
+/*
 G01 GYNECOLOGICAL ANTIINFECTIVES AND ANTISEPTICS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 39 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G01' and
+                    (synthetic_dose_form_group like '%Vaginal%');
+
+
+/*
 This group comprises gynecological antiinfectives and antiseptics mainly for local use. See also:
 
 J - Antiinfectives for systemic use
@@ -527,12 +762,32 @@ D06 - Antibiotics and chemotherapeutics for dermatological use
 P01AB - Nitroimidazole derivatives
 
 The DDDs are based on the treatment of vaginal infections.
-
+*/
+/*
 G02 OTHER GYNECOLOGICALS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 40 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G02A';
+    
+    
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 41 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G02B';
+    
+
+/*
 Analgesics used in dysmenorrhea, see N02B - Other analgesics and antipyretics and M01A - Antiinflammatory and antirheumatic products, non-steroids.
-
+*/
+/*
 G03 SEX HORMONES AND MODULATORS OF THE GENITAL SYSTEM
+*/
+
+
+/*
 
 Other hormones, see H - Systemic hormonal preparations, excl. sex hormones and insulins.
 
@@ -757,8 +1012,6 @@ and dose_form not like 'Ophthalmic%';
 
 /*
 
-
-New search    Hide text from Guidelines
 P ANTIPARASITIC PRODUCTS, INSECTICIDES AND REPELLENTS
 
 The group is subdivided according to types of parasites.
