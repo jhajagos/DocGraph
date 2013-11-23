@@ -652,7 +652,7 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
 ;
-/*
+
 /*
 D05 ANTIPSORIATICS
 */
