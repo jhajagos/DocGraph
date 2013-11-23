@@ -786,6 +786,11 @@ Analgesics used in dysmenorrhea, see N02B - Other analgesics and antipyretics an
 G03 SEX HORMONES AND MODULATORS OF THE GENITAL SYSTEM
 */
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G03' ;
+
 
 /*
 
@@ -794,17 +799,57 @@ Other hormones, see H - Systemic hormonal preparations, excl. sex hormones and i
 Sex hormones used only in the treatment of cancer (often selected strengths) are classified in L - Antineoplastic and immunomodulating agents.
 
 The DDDs of many of the hormone preparations may vary considerably with the route of administration due to substantial differences in bioavailability. The DDDs of depot preparations are calculated as the dose divided by the dosing interval.
-
+*/
+/*
 G04 UROLOGICALS
+*/
 
+
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G04'
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 43 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BA' 
+    and (synthetic_dose_form_group like 'Oral Product%');
+    ;
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 44 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BD' ;
+
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 45 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BE' and synthetic_dose_form_group not like 'Injectable Product%' ;
+    
+    
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 46 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BX' and synthetic_dose_form_group not like 'Injectable Product%'
+      and (synthetic_dose_form_group like 'Oral Product%');
+    ;    
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 47 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G04C';
+
+
+/*
 Antiseptic and antiinfective preparations for systemic use specifically used in urinary tract infections, see J01.
 
 Antiinfectives for systemic use, see group J.
 
 Gynecological antiinfectives and antiseptics, see G01.*/
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'G' and dose_form not like 'Otic%' 
-and dose_form not like 'Ophthalmic%' and dose_form not like '%Topical%' and dose_form not like '%Shampoo%' and dose_form not like '%Lozenge%';
 
 /*
 
