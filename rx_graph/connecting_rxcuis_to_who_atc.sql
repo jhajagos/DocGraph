@@ -608,7 +608,7 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
 This group comprises preparations for topical and systemic treatment of dermatological mycoses. Preparations with systemic antimycotic effect, see also J02A - Antimycotics for systemic use.
 
 Topical preparations used especially in gynecological infections are classified in G01A - Antiinfectives and antiseptics, excl. combinations with corticosteroids or G01B - Antiinfectives/antiseptics in combination with corticosteroids. Preparations for local treatment of fungal infections in the mouth, see A01AB - Antiinfectives and antiseptics for local oral treatment.
-
+*/
 /*
 D02 EMOLLIENTS AND PROTECTIVES
 
@@ -641,6 +641,7 @@ D06 - Antibiotic and chemotherapeutics for dermatological use.
 D08 - Antiseptics and disinfectants.
 D09 - Medicated dressings.
 */
+
 /*
 D04 ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC. */
 
@@ -806,7 +807,7 @@ G04 UROLOGICALS
 
 
  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
-    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G04'
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G04';
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
