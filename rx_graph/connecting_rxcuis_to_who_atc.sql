@@ -238,7 +238,7 @@ select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui3;
 drop table if exists rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated;
 
 create table rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated as 
-  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,
+  select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,
     1 as step
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'A07EA' and synthetic_dose_form_group
       like 'Rectal%';
@@ -260,7 +260,7 @@ Preparations containing local anesthetics, see N01B - Anesthetics, local, and R0
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 2 as step 
+    select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 2 as step 
      from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'A01A' and dose_form in ('Mouthwash', 'Oral Gel', 'Oral Paste', 'Oral Foam', 'Toothpaste');
 
 /*
@@ -274,7 +274,7 @@ Plain antiflatulents, see A03AX - Other drugs for functional gastrointestinal di
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-  select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 3 as step 
+  select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 3 as step 
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A02' and synthetic_dose_form_group not like 'Injectable Product%'
     and synthetic_dose_form_group like 'Oral Product%'; 
  /* 
@@ -288,13 +288,13 @@ Unsure about
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 4 as step from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A03' and
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 4 as step from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A03' and
   synthetic_dose_form_group like 'Oral Product%';
 
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 5 as step 
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 5 as step 
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A04' 
   and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable%' or synthetic_dose_form_group like '%Topical%');
 
@@ -304,7 +304,7 @@ select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A0
 /* DRUGS FOR CONSTIPATION */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 6 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 6 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A06' 
   and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Rectal Product%'
 );
@@ -313,7 +313,7 @@ from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A06'
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 7 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 7 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A07' and (synthetic_dose_form_group like 'Oral Product%');
   
 
@@ -321,33 +321,33 @@ from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A07' and (s
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 8 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 8 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A08' and (synthetic_dose_form_group like 'Oral Product%');
 
 /* Enzymes */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 9 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 9 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A09' and (synthetic_dose_form_group like 'Oral Product%');
 
 /* Diabetes drugs */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 10 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 10 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A10' and 
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
 /* Vitamins */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 11 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 11 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A11' and (synthetic_dose_form_group like 'Oral Product%');
 ;
 
 /* MINERAL SUPPLEMENTS */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 12 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 12 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A12' and (synthetic_dose_form_group like 'Oral Product%');
 
 
@@ -357,7 +357,7 @@ select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A1
 /* A14 Anabolic Steroids*/
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 13 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 13 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A14' and (synthetic_dose_form_group like 'Oral Product%');
 
 /* Appetite stimulators */
@@ -370,7 +370,7 @@ select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'A1
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 14 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 14 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B01' and 
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -378,19 +378,19 @@ from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B01' and
 /* epinephrine */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B02' and 
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
   
   
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B03' and 
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
 
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 15 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'B04';
 
 /*
@@ -415,19 +415,19 @@ B05Z HEMODIALYTICS AND HEMOFILTRATES
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 16 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 16 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05A' and 
   (synthetic_dose_form_group like 'Injectable Product%');
   
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 17 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 17 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05B' and 
   (synthetic_dose_form_group like 'Injectable Product%');
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 18 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 18 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'B05C' and 
   (synthetic_dose_form_group like 'Irrigation Product%');
 
@@ -442,7 +442,7 @@ C01 CARDIAC THERAPY
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 19 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 19 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C01' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -468,7 +468,7 @@ Parenteral DDDs are based on dosages used for the treatment of hypertensive cris
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 20 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 20 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C02' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -494,7 +494,7 @@ The DDDs for combinations correspond to the DDD for the diuretic component, exce
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 21 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 21 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C03' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -505,7 +505,7 @@ C04 PERIPHERAL VASODILATORS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 22 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 22 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C04' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -520,7 +520,7 @@ No DDDs are established in this group, since most of the drugs in this group are
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 23 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 23 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C05' and
   (synthetic_dose_form_group like  'Rectal Product%');
 
@@ -531,7 +531,7 @@ C07 BETA BLOCKING AGENTS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 24 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 24 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C07' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -542,7 +542,7 @@ C08 CALCIUM CHANNEL BLOCKERS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 25 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 25 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C08' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -576,7 +576,7 @@ The DDDs are based on the treatment of hypercholesterolemia.
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 26 as step  
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 26 as step  
 from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C10' and
   (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
@@ -593,14 +593,14 @@ D01 ANTIFUNGALS FOR DERMATOLOGICAL USE
 */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 27 as step  
+    select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 27 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D01A' and
       (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%');
 
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 28 as step  
+   select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 28 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D01B' and
     (synthetic_dose_form_group like 'Oral Product%');
 /*
@@ -616,7 +616,7 @@ D02 EMOLLIENTS AND PROTECTIVES
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 29 as step  
+   select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 29 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D02' and
           (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
@@ -628,7 +628,7 @@ D03 PREPARATIONS FOR TREATMENT OF WOUNDS AND ULCERS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 30 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 30 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D03' and
                    (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
@@ -647,7 +647,7 @@ D04 ANTIPRURITICS, INCL. ANTIHISTAMINES, ANESTHETICS, ETC. */
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 31 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 31 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D04' and
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
@@ -659,7 +659,7 @@ D05 ANTIPSORIATICS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 32 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 32 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D05' and
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
@@ -671,7 +671,7 @@ D06 ANTIBIOTICS AND CHEMOTHERAPEUTICS FOR DERMATOLOGICAL USE
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 33 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 33 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D06' and
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' or synthetic_dose_form_group like 'Paste Product%' or 
           synthetic_dose_form_group like 'Prefilled Applicator Product%');
@@ -685,7 +685,7 @@ D07 CORTICOSTEROIDS, DERMATOLOGICAL PREPARATIONS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 34 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 34 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D07' and
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%' );
 
@@ -707,7 +707,7 @@ D08 ANTISEPTICS AND DISINFECTANTS
 */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 35 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 35 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D08' and
                     (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Shampoo Product%'
                     or synthetic_dose_form_group like 'Soap Product%'
@@ -718,7 +718,7 @@ D09 MEDICATED DRESSINGS
 */
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 36 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 36 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'D09' and
                     (synthetic_dose_form_group like '%Medicated Pad%');
 /*
@@ -727,7 +727,7 @@ D10 ANTI-ACNE PREPARATIONS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-    select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,37 as step  
+    select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,37 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D10A' and
       (synthetic_dose_form_group like 'Topical Product%'
       or synthetic_dose_form_group like 'Prefilled Applicator%');
@@ -735,7 +735,7 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
-   select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 38 as step  
+   select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 38 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'D10B' and
     (synthetic_dose_form_group like 'Oral Product%');
 
@@ -750,7 +750,7 @@ G01 GYNECOLOGICAL ANTIINFECTIVES AND ANTISEPTICS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 39 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 39 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G01' and
                     (synthetic_dose_form_group like '%Vaginal%');
 
@@ -770,13 +770,13 @@ G02 OTHER GYNECOLOGICALS
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 40 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 40 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G02A';
     
     
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 41 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 41 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G02B';
     
 
@@ -789,7 +789,7 @@ G03 SEX HORMONES AND MODULATORS OF THE GENITAL SYSTEM
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G03' ;
 
 
@@ -806,12 +806,12 @@ G04 UROLOGICALS
 */
 
 
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 42 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'G04';
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 43 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 43 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BA' 
     and (synthetic_dose_form_group like 'Oral Product%');
     ;
@@ -819,28 +819,28 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 44 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 44 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BD' ;
 
 
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 45 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 45 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BE' and synthetic_dose_form_group not like 'Injectable Product%' ;
     
     
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 46 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 46 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc4 = 'G04BX' and synthetic_dose_form_group not like 'Injectable Product%'
       and (synthetic_dose_form_group like 'Oral Product%');
     ;    
 
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 47 as step  
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 47 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'G04C';
 
 
@@ -868,6 +868,16 @@ The DDDs are generally based on the treatment or diagnosis of endocrine disorder
 
 
 H01 PITUITARY AND HYPOTHALAMIC HORMONES AND ANALOGUES
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 48 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'H01' ;
+
+
+
+/*
 H02 CORTICOSTEROIDS FOR SYSTEMIC USE
 
 As a main rule, systemic corticosteroids should be classified in this group. There is, however, one exception: M01BA - Antiinflam-matory/antirheumatic agents in combination with corticosteroids.
@@ -886,17 +896,49 @@ Corticosteroids for nasal use, see R01AD.
 Corticosteroids for inhalation, see R03BA.
 
 Corticosteroids, eye/ear preparations, see S.
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 49 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'H02' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+/*
 H03 THYROID THERAPY
-H04 PANCREATIC HORMONES
-H05 CALCIUM HOMEOSTASIS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 50 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'H03' ;
+
+/*
+H04 PANCREATIC HORMONES
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 51 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'H04';
+
+
+/*
+H05 CALCIUM HOMEOSTASIS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 52 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'H05';
+
+
+/*
 Drugs acting on calcium homeostasis are classified in this group.
 
 Vitamin-D preparations, see A11CC.
 */
-
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'H';
 
 /*
 J ANTIINFECTIVES FOR SYSTEMIC USE
@@ -924,15 +966,130 @@ Even systemically administered antibacterials and antimycotics may be classified
 Inhaled antiinfectives are classified in J.
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'J'
-and (dose_form not like 'Vagina%' and dose_form not like 'Topical%' and dose_form not like 'Otic%'
-and dose_form not like 'Ophthalmic%' and dose_form not like 'Medicated%' and dose_form not like 'Irrigation%');
-;
+/*
+
+New search    Hide text from Guidelines
+J ANTIINFECTIVES FOR SYSTEMIC USE
+
+Antiinfectives are also classified in the following groups:
+
+A01AB Antiinfectives and antiseptics for local oral treatment
+A02BD Combinations for eradication of Helicobacter pylori
+A07A Intestinal antiinfectives
+D01 Antifungals for dermatological use
+D06 Antibiotics and chemotherapeutics for dermatological use
+D07C Corticosteroids, combinations with antibiotics
+D09AA Ointment dressings with antiinfectives
+D10AF Antiinfectives for treatment of acne
+G01 Gynecological antiinfectives and antiseptics
+P Antiparasitic products, insecticides and repellents
+R02AB Antibiotics
+R05X Other cold preparations
+S01/
+S02/
+S03 Eye and ear preparations with antiinfectives
+
+Even systemically administered antibacterials and antimycotics may be classified in other groups if their target is exclusively local, e.g. the skin - D01 - Antifungals for dermatological use
+
+Inhaled antiinfectives are classified in J.
+
+The DDDs for the antiinfectives are as a main rule based on the use in infections of moderate severity. However, some antiinfectives are only used in severe infections and their DDDs are assigned accordingly. The DDDs assigned are based on daily treatment. The duration of the treatment periods is not taken into consideration. For antiinfectives given in a high initially starting dose followed by a lower daily "maintenance" dose, the DDDs are based on the "maintenance" dose if the total duration of the treat-ment course is more than one week. If, however, the treatment course is 7 days or less, the DDDs are assigned according to the average daily dose i.e. the total course dose divided by the number of treatment days (e.g azithromycin).
+
+
+J01 ANTIBACTERIALS FOR SYSTEMIC USE
+
+This group comprises antibacterials for systemic use, except antimycobacterials, which are classified in J04. The antibacterials are classified according to their mode of action and chemistry.
+
+Combinations of two or more systemic antibacterials from different third levels are classified in J01R, except combinations of sulfonamides and trimethoprim, which are classified at a separate 4th level, J01EE.
+
+Combinations of antibacterials with other drugs, including local anesthetics or vitamins, are classified at separate 5th levels in the respective antibacterial group by using the 50-series. Common cold preparations containing minimal amounts of antibacterials are classified in R05X.
+
+Inhaled antiinfectives are classified here based on the fact that preparations for inhalation can not be separated from preparations for injection.*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 53 as step  
+  from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J01' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
+
+
+/*
+J02 ANTIMYCOTICS FOR SYSTEMIC USE
+*/
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 54 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J02' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+/*
+J04 ANTIMYCOBACTERIALS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 55 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J04' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+
+/*
+This group comprises drugs mainly used for the treatment of tuberculosis or lepra. However, streptomycins are classified in J01G - Aminoglycoside antibacterials. Streptomycin in combination with antimycobacterials are classified in J04AM.*/
 
 /*
 
 
-New search    Hide text from Guidelines
+/*
+J05 ANTIVIRALS FOR SYSTEMIC USE
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 56 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J05' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
+
+
+/*
+This group comprises specific antiviral agents, excl. vaccines.
+
+Antivirals for dermatological use, see D06BB.
+Antivirals for ophthalmological use, see S01A - Antiinfectives.
+
+Amantadine, which is also used as an antiviral agent, is classified in N04BB.
+*/
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 57 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J06' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
+/*
+J07 VACCINES
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 58 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J07' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
+
+
+/*
+The vaccines are divided in bacterial, viral and combinations of bacterial and viral at separate ATC 3rd levels. Subdivision at the 4th level is made mainly according to indication, while subdivision at the 5th level is mainly related to the manufacturing process. Combinations of vaccines within the same 3rd level are given separate 5th levels using the 50-series. 5th levels may contain adjuvans.
+
+See comments under the 4th levels.*/
+
+/*
 L ANTINEOPLASTIC AND IMMUNOMODULATING AGENTS
 
 This group comprises preparations used in the treatment of malignant neoplastic diseases, and immunomodulating agents.
