@@ -966,37 +966,17 @@ Even systemically administered antibacterials and antimycotics may be classified
 Inhaled antiinfectives are classified in J.
 */
 
+
+/* J01 ANTIBACTERIALS FOR SYSTEMIC USE */
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 53 as step  
+  from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J01' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
+
 /*
-
-New search    Hide text from Guidelines
-J ANTIINFECTIVES FOR SYSTEMIC USE
-
-Antiinfectives are also classified in the following groups:
-
-A01AB Antiinfectives and antiseptics for local oral treatment
-A02BD Combinations for eradication of Helicobacter pylori
-A07A Intestinal antiinfectives
-D01 Antifungals for dermatological use
-D06 Antibiotics and chemotherapeutics for dermatological use
-D07C Corticosteroids, combinations with antibiotics
-D09AA Ointment dressings with antiinfectives
-D10AF Antiinfectives for treatment of acne
-G01 Gynecological antiinfectives and antiseptics
-P Antiparasitic products, insecticides and repellents
-R02AB Antibiotics
-R05X Other cold preparations
-S01/
-S02/
-S03 Eye and ear preparations with antiinfectives
-
-Even systemically administered antibacterials and antimycotics may be classified in other groups if their target is exclusively local, e.g. the skin - D01 - Antifungals for dermatological use
-
-Inhaled antiinfectives are classified in J.
-
-The DDDs for the antiinfectives are as a main rule based on the use in infections of moderate severity. However, some antiinfectives are only used in severe infections and their DDDs are assigned accordingly. The DDDs assigned are based on daily treatment. The duration of the treatment periods is not taken into consideration. For antiinfectives given in a high initially starting dose followed by a lower daily "maintenance" dose, the DDDs are based on the "maintenance" dose if the total duration of the treat-ment course is more than one week. If, however, the treatment course is 7 days or less, the DDDs are assigned according to the average daily dose i.e. the total course dose divided by the number of treatment days (e.g azithromycin).
-
-
-J01 ANTIBACTERIALS FOR SYSTEMIC USE
 
 This group comprises antibacterials for systemic use, except antimycobacterials, which are classified in J04. The antibacterials are classified according to their mode of action and chemistry.
 
@@ -1005,13 +985,6 @@ Combinations of two or more systemic antibacterials from different third levels 
 Combinations of antibacterials with other drugs, including local anesthetics or vitamins, are classified at separate 5th levels in the respective antibacterial group by using the 50-series. Common cold preparations containing minimal amounts of antibacterials are classified in R05X.
 
 Inhaled antiinfectives are classified here based on the fact that preparations for inhalation can not be separated from preparations for injection.*/
-
-insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
-  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
- select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 53 as step  
-  from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'J01' 
-    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
-    or synthetic_dose_form_group like 'Drug Implant Product%' or synthetic_dose_form_group like 'Inhalant Product%');
 
 
 /*
@@ -1095,9 +1068,21 @@ L ANTINEOPLASTIC AND IMMUNOMODULATING AGENTS
 This group comprises preparations used in the treatment of malignant neoplastic diseases, and immunomodulating agents.
 
 Corticosteroids for systemic use, see H02.
+*/
 
+/*
 L01 ANTINEOPLASTIC AGENTS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 59 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'L01' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+
+/*
 Combination products are classified in L01XY - Combinations of antineoplastic agents.
 
 Detoxifying agents used in connection with high dose treatment of antineoplastic agents are classified in V03AF (e.g. calcium folinate)
@@ -1105,19 +1090,54 @@ Detoxifying agents used in connection with high dose treatment of antineoplastic
 No DDDs have been established because of highly individualised use and wide dosage ranges. The doses used vary substantially because of various types and severity of neoplastic diseases, and also because of the extensive use of combination therapy.
 
 The consumption of the antineoplastic agents is in some countries measured in grams. This is recommended as a method to be used internationally for these particular agents.
-
+*/
+/*
 L02 ENDOCRINE THERAPY
+*/
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 60 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'L02' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+/*
 Estrogens and progestogens used specifically in the treatment of neoplastic diseases are classified in this group. This means that some strengths may be classified in this group, while remaining strengths are classified in G03 - Sex hormones and modulators of the genital system.
 
 The DDDs are based on the treatment of cancer (breast-, endometrial, and prostatic).
+*/
 
+/*
 L03 IMMUNOSTIMULANTS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 61 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'L03' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+/*
 Immunosuppressants, see L04A.
+*/
 
+/*
 L04 IMMUNOSUPPRESSANTS
+*/
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 62 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'L04' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+
+/*
 Immunosuppressants are defined as agents that completely or partly suppress one or more factors in the immunosystem.
 */
 
@@ -1127,16 +1147,67 @@ select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'L'
 M MUSCULO-SKELETAL SYSTEM
 
 M01 ANTIINFLAMMATORY AND ANTIRHEUMATIC PRODUCTS
-M02 TOPICAL PRODUCTS FOR JOINT AND MUSCULAR PAIN
-M03 MUSCLE RELAXANTS
+*/
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 63 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M01' 
+    and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Drug Implant Product%');
+
+
+/*
+M02 TOPICAL PRODUCTS FOR JOINT AND MUSCULAR PAIN
+*/
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 64 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M02' 
+    and (synthetic_dose_form_group like 'Topical Product%');
+
+
+/*
+M03 MUSCLE RELAXANTS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 65 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M03' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+/*
 This group comprises peripherally, centrally and directly acting muscle relaxants.
 
 See also G04BD - Drugs for urinary frequency and incontinence.
-
+*/
+/*
 M04 ANTIGOUT PREPARATIONS
-M05 DRUGS FOR TREATMENT OF BONE DISEASES
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 66 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M04' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+/*
+M05 DRUGS FOR TREATMENT OF BONE DISEASES
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 67 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M05' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+/*
 Drugs used for the treatment of bone diseases, see also:
 
 A11CC - Vitamin D and analogues
@@ -1145,19 +1216,38 @@ A12AX - Calcium, combinations with vitamin D and/or other drugs
 A12CD - Fluoride
 G03C/G03F - Estrogens/Progestogens and estrogens in combination
 H05BA - Calcitonins
+*/
 
+/*
 M09 OTHER DRUGS FOR DISORDERS OF THE MUSCULO-SKELETAL SYSTEM
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'M' and dose_form not like 'Ophthalmic%' 
-and dose_form not like 'Ophthalmic%' and dose_form not like 'Nasal%';
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 68 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'M09' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
 /*
-
 N NERVOUS SYSTEM
+*/
 
+/*
 N01 ANESTHETICS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 69 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'N01A' ;
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 70 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'N01B' ;
+
+/*
 No DDDs have been established in this group because the doses used vary substantially.
 
 N02 ANALGESICS
@@ -1232,9 +1322,6 @@ No DDDs are assigned in this group. Substances classified in this group are for 
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'P'; /* Check v route */
 
 /*
-
-
-New search    Hide text from Guidelines
 R RESPIRATORY SYSTEM
 
 Inhaled antiinfectives are classified in ATC group J - Antiinfectives for systemic use.
@@ -1269,7 +1356,6 @@ and dose_form not like '%Rectal%'
 ; /* Need to filter routes e.g., nasal preparations */
 
 /*
-New search    Hide text from Guidelines
 S SENSORY ORGANS
 
 A formulation approved both for use in the eye/ear is classified in S03, while formulations only licensed for use in the eye or the ear are classified in S01 and S02, respectively.
