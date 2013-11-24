@@ -1012,10 +1012,8 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
 
 
 /*
-This group comprises drugs mainly used for the treatment of tuberculosis or lepra. However, streptomycins are classified in J01G - Aminoglycoside antibacterials. Streptomycin in combination with antimycobacterials are classified in J04AM.*/
-
-/*
-
+This group comprises drugs mainly used for the treatment of tuberculosis or lepra. However, streptomycins are classified in J01G - Aminoglycoside antibacterials. Streptomycin in combination with antimycobacterials are classified in J04AM.
+*/
 
 /*
 J05 ANTIVIRALS FOR SYSTEMIC USE
@@ -1386,9 +1384,6 @@ Small amounts of antiseptics (e.g. benzalconium) in eye/ear preparations do not 
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'S' and (dose_form like 'Ophthalmic%' or dose_form like 'Otic%') ;
 
 /*
-
-
-New search    Hide text from Guidelines
 V VARIOUS
 
 This group comprises many different types of drugs, and assigning DDDs are difficult. Very few DDDs are assigned in this group.
