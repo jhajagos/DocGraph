@@ -1243,13 +1243,29 @@ select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_do
 insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
   synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
 select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 70 as step  
-    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'N01B' ;
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 = 'N01B' 
+    and  (synthetic_dose_form_group like 'Topical Product%' or synthetic_dose_form_group like 'Mucosal Product%'
+    or synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Prefilled Applicator Product%'
+    );
+    
 
 /*
 No DDDs have been established in this group because the doses used vary substantially.
-
+*/
+/*
 N02 ANALGESICS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 71 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N02' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+    or synthetic_dose_form_group like 'Transdermal Product'
+    );
+
+
+/*
 This group comprises general analgesics and antipyretics.
 
 All salicylic acid derivatives except combinations with corticosteroids are classified in N02BA - Salicylic acid and derivatives, as it is difficult to differentiate between the use of salicylates in rheumatic conditions and other therapeutic uses of salicylates.
@@ -1269,16 +1285,35 @@ M03 - Muscle relaxants
 See comments to these groups.
 
 Lidocaine indicated for postherpetic pain is classified in N01BB.
-
+*/
+/*
 N03 ANTIEPILEPTICS
-N04 ANTI-PARKINSON DRUGS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 72 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N03' 
+    and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
+
+
+/*
+N04 ANTI-PARKINSON DRUGS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 73 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N04';
+
+/*
 This group comprises preparations used in the treatment of Parkinson's disease and related conditions, including drug-induced parkinsonism.
 
 The DDDs are based on recommended doses for the long-term treatment of symptoms of Parkinson's disease.
 
 No separate DDDs are established for oral depot formulations.
-
+*/
+/*
 N05 PSYCHOLEPTICS
 
 The group is divided into therapeutic subgroups:
@@ -1286,49 +1321,161 @@ The group is divided into therapeutic subgroups:
 N05A - Antipsychotics
 N05B - Anxiolytics
 N05C - Hypnotics and sedatives
+*/
 
+/* Lithium is not mapped probably because of Lithium Chloride */
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 74 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N05'
+      and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+      or synthetic_dose_form_group like 'Prefilled Applicator Product%' or synthetic_dose_form_group like '%Transdermal Product%'
+      )
+      ;
+
+/*
 N06 PSYCHOANALEPTICS
-
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 75 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N06'
+      and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+      or synthetic_dose_form_group like 'Prefilled Applicator Product%' or synthetic_dose_form_group like '%Transdermal Product%'
+      )
+      ;
+/*
 This group comprises antidepressants, psychostimulants, nootropics anti-dementia drugs and combinations with psycholeptics.
 
 Antiobesity preparations are classified in A08 - Antiobesity preparations, excl. diet products.
-
+*/
+/*
 N07 OTHER NERVOUS SYSTEM DRUGS
-
-This group comprises other nervous system drugs, which cannot be classified in the preceding 2nd levels in ATC group N.
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'N' and dose_form not like 'Ophthalmic%' 
-and dose_form not like 'Ophthalmic%';
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 76 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N07'
+      and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+      or synthetic_dose_form_group like 'Prefilled Applicator Product%' or synthetic_dose_form_group like '%Transdermal Product%'
+      or synthetic_dose_form_group like 'Inhalant Product%'
+      )
+      ;
+/*
+
+/*
+This group comprises other nervous system drugs, which cannot be classified in the preceding 2nd levels in ATC group N.
+*/
 
 /*
 
 P ANTIPARASITIC PRODUCTS, INSECTICIDES AND REPELLENTS
 
 The group is subdivided according to types of parasites.
+*/
+/*
+P01 ANTIPROTOZOALS*/
 
-P01 ANTIPROTOZOALS
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 77 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'P01'
+       and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%')
+
+/*
 P02 ANTHELMINTICS
+*/
+/*The anthelmintics are subdivided according to the main type of worms (i.e. trematodes, nematodes and cestodes) causing the infections.
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 78 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'P02'
+       and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+        or synthetic_dose_form_group like 'Prefilled Applicator Product%' or synthetic_dose_form_group like 'Topical Product%'
+       )
+;
 
-The anthelmintics are subdivided according to the main type of worms (i.e. trematodes, nematodes and cestodes) causing the infections.
-
+/*
 P03 ECTOPARASITICIDES, INCL. SCABICIDES, INSECTICIDES AND REPELLENTS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 79 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'P03'
+       and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
+        or synthetic_dose_form_group like 'Prefilled Applicator Product%' or synthetic_dose_form_group like 'Topical Product%'
+       );
+
+
+/*
 No DDDs are assigned in this group. Substances classified in this group are for topical use and the consumption figures for these preparations could be expressed in e.g. grams of preparations regardless of strength.
 */
 
-select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'P'; /* Check v route */
 
 /*
 R RESPIRATORY SYSTEM
 
 Inhaled antiinfectives are classified in ATC group J - Antiinfectives for systemic use.
-
+*/
+/*
 R01 NASAL PREPARATIONS
-R02 THROAT PREPARATIONS
-R03 DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES
-R05 COUGH AND COLD PREPARATIONS
+*/
 
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 80 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'R01' 
+     and  (synthetic_dose_form_group like '%Nasal Product%' );
+
+/*
+R02 THROAT PREPARATIONS
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 81 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'R02' 
+     and  (dose_form in ('Lozenge', 'Oral Gel', 'Oral Spray', 'Oral Ointment', 'Oral Paste') );
+
+
+/*
+R03 DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES
+
+R03A ADRENERGICS, INHALANTS
+R03B OTHER DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES, INHALANTS
+R03C ADRENERGICS FOR SYSTEMIC USE
+R03D OTHER SYSTEMIC DRUGS FOR OBSTRUCTIVE AIRWAY DISEASES
+
+*/
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 82 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 in ('R03A', 'R03B') 
+     and  (dose_form in ('Metered Dose Inhaler', 'Dry Powder Inhaler', 'Inhalant Solution'));
+       
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 83 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc3 in ('R03C', 'R03D') 
+     and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');    
+/*
+R05 COUGH AND COLD PREPARATIONS
+*/
+
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 84 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'R05'
+     and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'); 
+
+/*
 This group comprises a large number of preparations, most of which are combined preparations.
 
 Cold preparations containing therapeutic levels of antiinfectives should be classified in ATC group J - Antiinfectives for systemic use.
@@ -1345,8 +1492,24 @@ See also R01 - Nasal preparations, R02 - Throat preparations, and R03D - Other s
 Fixed DDDs are assigned for combinations. These DDDs are based on an average dose regimen of three times daily, and dosages in the upper area of the recommended dose ranges are chosen. The strengths of the various components are not taken into consideration. E.g. 6 UD (= 30 ml) is the fixed DDD for products where the recommended dose is 5-10 ml.
 
 R06 ANTIHISTAMINES FOR SYSTEMIC USE
+*/
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 85 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'R06'
+     and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'); 
+
+
+/*
 R07 OTHER RESPIRATORY SYSTEM PRODUCTS
 */
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, step)
+select distinct rxcui, atc5_name, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, 86 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'R07';
+
 
 select * from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc1 = 'R' and dose_form not like '%Ophthalmic%' 
 and dose_form not like '%Topical%' and dose_form not like 'Medicated Pad' and dose_form not like '%Otic%' and dose_form not like '%Vaginal%'
