@@ -555,9 +555,17 @@ Combinations with beta blocking agents are classified in C07F.
 The DDDs for calcium channel blockers are based on the treatment of mild-moderate hypertension, although some are used for other indications (e.g. angina pectoris).
 
 The DDDs for oral and parenteral preparations are equal and are based on the oral dose, since oral preparations represent the major fraction of the total consumption.
-
+*/
+/*
 C09 AGENTS ACTING ON THE RENIN-ANGIOTENSIN SYSTEM
+*/
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc5,  atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,  dose_form_rxaui, dose_form_rxcui, step)
+select distinct rxcui, atc5_name, atc5, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, dose_form_rxaui, dose_form_rxcui, 500 as step  
+from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'C08' and
+  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%');
 
+/*
 The DDDs are based on the treatment of mild-moderate hypertension.
 
 See comments to C02L concerning the principles for assignment of DDDs for combined preparations.
@@ -1595,20 +1603,153 @@ select distinct rxcui, atc5_name, atc5, atc_code_concat, atc_name_concat, synthe
      
 
 
+
+insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_name, atc5,  atc_code_concat, atc_name_concat, 
+  synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form,  dose_form_rxaui, dose_form_rxcui, step)
+select distinct rxcui, atc5_name, atc5, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, dose_form_rxaui, dose_form_rxcui, 90 as step  
+    from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'V06'
+     and (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%' or synthetic_dose_form_group like 'Inhalant Product%'); 
+     
+
 create index idx_atc_in_rxcui on rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated(rxcui);
 create index idx_df_rxaui on rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated(dose_form_rxaui);
+
+drop table if exists rxnorm_prescribe.sbd_mapped_to_synthetic_atc;
      
 create table rxnorm_prescribe.sbd_mapped_to_synthetic_atc as     
   select sbd_rxaui, sbd_rxcui, dd.semantic_branded_name, count(distinct ailrc.atc5) as counter,  GROUP_CONCAT(distinct ailrc.atc5 order by ailrc.atc5 asc separator '|') as synthetic_atc5,
-  GROUP_CONCAT(distinct ailrc.atc5_name order by ailrc.atc5_name asc separator '|') as synthetic_atc5_name
+  GROUP_CONCAT(distinct ailrc.atc5_name order by ailrc.atc5_name asc separator '|') as synthetic_atc5_name,
+  1 as step
   from rxnorm_prescribe.drug_details dd join rxnorm_prescribe.relation_between_ingredient_clinical_drug rbicd on dd.scd_rxaui = rbicd.scd_rxaui
     join rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated ailrc on dd.dose_form_rxaui = ailrc.dose_form_rxaui and rbicd.in_rxcui = ailrc.rxcui
     group by sbd_rxaui, sbd_rxcui, dd.semantic_branded_name;
-    
+
+/* Manual mappings */    
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N02BE01', '	paracetamol', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Acetaminophen' and synthetic_dose_form_group like 'Rectal Product%';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D10AE01', 'benzoyl peroxide', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Benzoyl Peroxide';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D11AX11', 'hydroquinone', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'hydroquinone';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D11AX12  ', 'pyrithione zinc ', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'zinc pyrithione';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D02AB ', 'Zinc products', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Zinc Oxide';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'A06AA02', 'docusate sodium', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Docusate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'A01AA02', 'sodium monofluorophosphate', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'monofluorophosphate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'C01DA02', 'glyceryl trinitrate', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Nitroglycerin';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N03AG01', 'valproic acid', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Valproate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D08AJ08', 'benzethonium chloride ', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Benzethonium';
+
+/*carbamide peroxide		hydrogen peroxide */
+/*insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'J07BB', 'Influenza vaccines', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Influenza Virus Vaccine, Inactivated A-California-07-2009 X-181 (H1N1) strain / Influenza Virus Vaccine, Inactivated A-Victoria-210-2009 X-187 (H3N2) (A-Perth-16-2009) strain / Influenza Virus Vaccine, Inactivated B-Brisbane-60-2008 strain';*/
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'S01AB04', 'sulfacetamide ', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Sulfacetamide';
+
+/*insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'J07BB', 'Influenza vaccines', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Influenza Virus Vaccine, Inactivated A-California-07-2009 X-179A (H1N1) strain / Influenza Virus Vaccine, Inactivated A-Victoria-210-2009 X-187 (H3N2) (A-Perth-16-2009) strain / Influenza Virus Vaccine, Inactivated B-Brisbane-60-2008 strain';*/
+
+/*insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'J07BB', 'Influenza vaccines', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Influenza Virus Vaccine, Inactivated A-Brisbane-59-2007, IVR-148 (H1N1) strain / Influenza Virus Vaccine, Inactivated A-Uruguay-716-2007, NYMC X-175C (H3N2) strain / Influenza Virus Vaccine, Inactivated B-Brisbane-60-2008 strain';*/
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'C01DA08', 'isosorbide dinitrate ', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Isosorbide';
+
+/*Cetylpyridinium		cetylpyridinium
+fluocinolone		fluocinolone acetonide*/
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'R06AA02', 'diphenhydramine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Dimenhydrinate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N01BB01', 'bupivacaine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Bupivacaine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'M05BA04', 'alendronic acid', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Alendronate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'M03BC01', 'orphenadrine (citrate)', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Orphenadrine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'H03AA03', 'combinations of levothyroxine and liothyronine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Thyroxine / Triiodothyronine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'B02BC06', 'thrombin ', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Thrombin';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'R03AC02', 'salbutamol', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Levalbuterol';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'M05BA07', 'risedronic acid', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Risedronate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'G03CA57', 'conjugated estrogens', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'estrogens, conjugated synthetic A';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N05BA05', 'potassium clorazepate', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'clorazepate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'G03CA57', 'conjugated estrogens', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'estrogens, conjugated synthetic B';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'L01BC02', 'fluorouracil', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Fluorouracil';
+
+/*heparin, porcine		heparin */
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'A16AA04', 'mercaptamine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Cysteamine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N01BB09', 'ropivacaine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'ropivacaine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N05AB04', 'prochlorperazine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Prochlorperazine';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'S01BA14', 'loteprednol', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'loteprednol etabonate';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'L04AA06', 'mycophenolic acid', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'mycophenolate mofetil';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'R01BA01', 'phenylpropanolamine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Phenylpropanolamine';
+
+/*Atropine		atropine */
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'D05AD02', 'methoxsalen', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Methoxsalen';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'A06AH01', 'methylnaltrexone bromide', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'methylnaltrexone';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N02CC01', 'sumatriptan', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Sumatriptan'; /*caution */
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'C02DC01', 'minoxidil', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Minoxidil';
+
+insert into rxnorm_prescribe.sbd_mapped_to_synthetic_atc (sbd_rxcui, sbd_rxaui, semantic_branded_name, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select dd.sbd_rxcui,dd.sbd_rxaui, semantic_branded_name, 1, 'N05AN01  ', 'lithium', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Lithium Carbonate';
+
+
 
 create index idx_sbd_atc_rxaui on rxnorm_prescribe.sbd_mapped_to_synthetic_atc(sbd_rxaui);    
     
 select dd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name from rxnorm_prescribe.drug_details dd 
   left outer join rxnorm_prescribe.sbd_mapped_to_synthetic_atc smsa on dd.sbd_rxaui = smsa.sbd_rxaui
-  where dd.rxn_human_drug is not null
-   order by smsa.synthetic_atc5, dd.generic_name;
+  where dd.rxn_human_drug is not null and smsa.sbd_rxaui is null
+   order by smsa.synthetic_atc5, dd.generic_name
+   ;
