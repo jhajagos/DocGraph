@@ -28,10 +28,10 @@ LOAD DATA INFILE '/tmp/npi_bn.csv' INTO TABLE rx_graph_brand_name
         day_supply_sum = case @day_supply_sum when '' then NULL else @day_supply_sum end,
         gross_drug_cost_sum = case @gross_drug_cost_sum when '' then NULL else @gross_drug_cost_sum end;
 
+drop table rx_graph_ndc9_rxcui;
+drop table if exists rx_graph_ndc9;
 
-drop table if exists rx_graph_ndc9_rxcui;
-
-create table rx_graph_ndc9_rxcui (id integer not null auto_increment,
+create table rx_graph_ndc9 (id integer not null auto_increment,
 npi char(10),
 ndc9 char(9),
 rxcui_name varchar(1023),
@@ -43,7 +43,7 @@ day_supply_sum Integer,
 gross_drug_cost_sum DOUBLE,
 primary key(id));
 
-LOAD DATA INFILE '/tmp/npi_ndc9.csv' INTO TABLE rx_graph_ndc9_rxcui
+LOAD DATA INFILE '/tmp/npi_ndc9.csv' INTO TABLE rx_graph_ndc9
       FIELDS TERMINATED BY ',' ENCLOSED BY '"' ESCAPED BY '\0'
       LINES TERMINATED BY '\n'
       IGNORE 1 LINES
@@ -58,5 +58,6 @@ LOAD DATA INFILE '/tmp/npi_ndc9.csv' INTO TABLE rx_graph_ndc9_rxcui
         day_supply_sum = case @day_supply_sum when '' then NULL else @day_supply_sum end,
         gross_drug_cost_sum = case @gross_drug_cost_sum when '' then NULL else @gross_drug_cost_sum end;
 
-create index idx_npi_ndc9_ndc9 on rx_graph_ndc9_rxcui(ndc9);
-create index idx_npi_ndc9_npi on rx_graph_ndc9_rxcui(npi);
+create index idx_rx_npi_ndc9_ndc9 on rx_graph_ndc9_rxcui(ndc9);
+create index idx_rx_npi_ndc9_npi on rx_graph_ndc9_rxcui(npi);
+

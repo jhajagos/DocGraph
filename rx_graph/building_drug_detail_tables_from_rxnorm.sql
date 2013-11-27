@@ -1,60 +1,24 @@
+/* Build the branded drug tables */
 
-         
-select r1.RXCUI, r1.RXAUI, r1.STR, r1.Code, rn1.ATN, rn1.ATV  from rxnorm.rxnconso r1 
-   join rxnorm.rxnsat rn1 on r1.rxaui = rn1.rxaui
-     where r1.SAB='RXNORM' and r1.TTY='SBD' and r1.SUPPRESS = 'N'
-     order by r1.rxaui, rn1.ATN, rn1.ATV
-    ;
-/*
-RXCUI	RXAUI	STR	ATN	ATV
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	NDC	00009377805
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	RXN_AVAILABLE_STRENGTH	0.01 MG/ML
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	RXN_HUMAN_DRUG	US
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	RXTERM_FORM	Sol
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	UMLSAUI	A10449292
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	UMLSCUI	C0592377
-*/
-
-select r1.RXCUI, r1.RXAUI, r1.STR, r1.CODE, r1.TTY, rr1.rela, 
-  r2.RXCUI, r2.RXAUI, r2.STR, r2.CODE, r2.TTY from rxnorm.rxnconso r1 
-   join rxnorm.rxnrel rr1 on r1.rxcui = rr1.rxcui1
-   join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2
-     where r1.SAB='RXNORM' and r1.TTY='SBD' and r1.SUPPRESS = 'N' and r2.SAB = 'RXNORM'
-     order by r1.rxaui, rr1.RELA
-    ;
-    
-    
- /* 
- 
- RXCUI	RXAUI	STR	CODE	TTY	rela	RXCUI1	RXAUI1	STR1	CODE1	TTY1
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	constitutes	329016	1505760	Alprostadil 0.01 MG/ML	329016	SCDC
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	constitutes	564985	2280366	Alprostadil 0.01 MG/ML [Caverject]	564985	SBDC
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	dose_form_of	316949	1479803	Injectable Solution	316949	DF
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	has_tradename	242690	1252463	Alprostadil 0.01 MG/ML Injectable Solution	242690	SCD
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	has_tradename	242690	3293373	alprostadil 10 MCG/ML Injectable Solution	242690	SY
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	ingredient_of	477639	1001687	Caverject	477639	BN
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	inverse_isa	362552	2053418	Alprostadil Injectable Solution [Caverject]	362552	SBDF
-152571	1002288	Alprostadil 0.01 MG/ML Injectable Solution [Caverject]	152571	SBD	inverse_isa	1176398	3831882	Caverject Injectable Product	1176398	SBDG
-
-*/
-drop table rxnorm_prescribe.rxnorm_sbd1;
+drop table if exists rxnorm_prescribe.rxnorm_sbd1;
 
 create table rxnorm_prescribe.rxnorm_sbd1 as
-  select r.RXCUI as SBD_RXCUI, r.RXAUI as SBD_RXAUI, r.STR as semantic_branded_name, rn1.atv as rxn_available_string, 
-  rn2.atv as rxterm_form, rn3.atv as rxn_human_drug,
-  r.SAB, r.TTY, 
-  r.SUPPRESS 
-  /* ,rs.SVER, rs.SCIT */ 
-  from rxnorm.RxnConso r
-    left outer join rxnorm.rxnsat rn1 on rn1.RXAUI = r.RXAUI and rn1.ATN = 'RXN_AVAILABLE_STRENGTH'
-    left outer join rxnorm.rxnsat rn2 on rn2.RXAUI = r.RXAUI and rn2.ATN = 'RXTERM_FORM'
-    left outer join rxnorm.rxnsat rn3 on rn3.RXAUI = r.RXAUI and rn3.ATN = 'RXN_HUMAN_DRUG'
-    /*join rxnorm.rxnsab rs on rs.RSAB = r.SAB*/
-    where r.TTY = 'SBD' and r.SAB='RXNORM' and r.SUPPRESS = 'N';
+  select * from (
+    select r.RXCUI as SBD_RXCUI, r.RXAUI as SBD_RXAUI, r.STR as semantic_branded_name, rn1.atv as rxn_available_string, 
+    rn2.atv as rxterm_form, rn3.atv as rxn_human_drug,
+    r.SAB, r.TTY, 
+    r.SUPPRESS 
+    /* ,rs.SVER, rs.SCIT */ 
+    from rxnorm.RxnConso r
+      left outer join rxnorm.rxnsat rn1 on rn1.RXAUI = r.RXAUI and rn1.ATN = 'RXN_AVAILABLE_STRENGTH'
+      left outer join rxnorm.rxnsat rn2 on rn2.RXAUI = r.RXAUI and rn2.ATN = 'RXTERM_FORM'
+      left outer join rxnorm.rxnsat rn3 on rn3.RXAUI = r.RXAUI and rn3.ATN = 'RXN_HUMAN_DRUG'
+      /*join rxnorm.rxnsab rs on rs.RSAB = r.SAB*/
+      where r.TTY in ('SBD') and r.SAB='RXNORM' and r.SUPPRESS = 'N') t where rxn_human_drug is not NULL;
   
 create index rxn_sbdrxcui on rxnorm_prescribe.rxnorm_sbd1(SBD_RXCUI);  
 
-drop table rxnorm_prescribe.rxnorm_sbd2;
+drop table if exists rxnorm_prescribe.rxnorm_sbd2;
 
 create table rxnorm_prescribe.rxnorm_sbd2 as
   select distinct r1.*, r2.rxaui as bn_rxaui, r2.rxcui as bn_rxcui, r2.str as brand_name
@@ -63,7 +27,7 @@ create table rxnorm_prescribe.rxnorm_sbd2 as
        join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.TTY = 'BN' and r2.SAB = 'RXNORM'
          order by r1.sbd_rxaui, rr1.RELA;
          
-drop table rxnorm_prescribe.rxnorm_sbd3;        
+drop table if exists rxnorm_prescribe.rxnorm_sbd3;        
 create table rxnorm_prescribe.rxnorm_sbd3 as
   select distinct r1.*, r2.rxaui as dose_form_rxaui, r2.rxcui as dose_form_rxcui, r2.str as dose_form
     from rxnorm_prescribe.rxnorm_sbd2 r1
@@ -71,7 +35,7 @@ create table rxnorm_prescribe.rxnorm_sbd3 as
        join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.TTY = 'DF' and r2.SAB = 'RXNORM'
          order by r1.sbd_rxaui, rr1.RELA;
 
-drop table rxnorm_prescribe.rxnorm_sbd4;         
+drop table if exists rxnorm_prescribe.rxnorm_sbd4;         
 create table rxnorm_prescribe.rxnorm_sbd4 as
   select distinct r1.*, r2.rxaui as scd_rxaui, r2.rxcui as scd_rxcui, r2.str as semantic_clinical_drug
     from rxnorm_prescribe.rxnorm_sbd3 r1
@@ -79,6 +43,60 @@ create table rxnorm_prescribe.rxnorm_sbd4 as
        join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.TTY = 'SCD' and r2.SAB = 'RXNORM'
          order by r1.sbd_rxaui, rr1.RELA;
          
+/* Build the semantic clinicaldrug table */
+drop table if exists rxnorm_prescribe.rxnorm_scd1;
+
+create table rxnorm_prescribe.rxnorm_scd1 as
+  select * from (
+    select r.RXCUI as SCD_RXCUI, r.RXAUI as SCD_RXAUI, r.STR as semantic_clinical_name, rn1.atv as rxn_available_string, 
+    rn2.atv as rxterm_form, rn3.atv as rxn_human_drug,
+    r.SAB, r.TTY, 
+    r.SUPPRESS 
+    /* ,rs.SVER, rs.SCIT */ 
+    from rxnorm.RxnConso r
+      left outer join rxnorm.rxnsat rn1 on rn1.RXAUI = r.RXAUI and rn1.ATN = 'RXN_AVAILABLE_STRENGTH'
+      left outer join rxnorm.rxnsat rn2 on rn2.RXAUI = r.RXAUI and rn2.ATN = 'RXTERM_FORM'
+      left outer join rxnorm.rxnsat rn3 on rn3.RXAUI = r.RXAUI and rn3.ATN = 'RXN_HUMAN_DRUG'
+      /*join rxnorm.rxnsab rs on rs.RSAB = r.SAB*/
+      where r.TTY in ('SCD') and r.SAB='RXNORM' and r.SUPPRESS = 'N') t where rxn_human_drug is not null;
+      
+drop table if exists rxnorm_prescribe.rxnorm_scd2;        
+create table rxnorm_prescribe.rxnorm_scd2 as
+  select distinct r1.*, r2.rxaui as dose_form_rxaui, r2.rxcui as dose_form_rxcui, r2.str as dose_form
+    from rxnorm_prescribe.rxnorm_scd1 r1
+       join rxnorm.rxnrel rr1 on r1.scd_rxcui = rr1.rxcui1 and rr1.RELA = 'dose_form_of'
+       join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.TTY = 'DF' and r2.SAB = 'RXNORM'
+         order by r1.scd_rxaui, rr1.RELA;      
+         
+
+drop table if exists rxnorm_prescribe.rxnorm_scd3;        
+create table rxnorm_prescribe.rxnorm_scd3 as
+  select * from rxnorm_prescribe.rxnorm_scd2 where SCD_RXCUI not in (select distinct SCD_RXCUI from rxnorm_prescribe.rxnorm_sbd4);
+
+/* Merge the SBD and SCD drugs */
+
+drop table if exists rxnorm_prescribe.merged_rxnorm_sbd_scd1;
+
+create table rxnorm_prescribe.merged_rxnorm_sbd_scd1 as
+  select SBD_RXCUI, SBD_RXAUI, semantic_branded_name, rxn_available_string, rxterm_form, rxn_human_drug, SAB, TTY, 
+    SUPPRESS, bn_rxcui, bn_rxaui, brand_name, dose_form_rxaui, dose_form_rxcui, dose_form, scd_rxaui, scd_rxcui, semantic_clinical_drug
+  from rxnorm_prescribe.rxnorm_sbd4 rsb4
+    union
+select null, null, null, rxn_available_string, rxterm_form, rxn_human_drug, SAB, TTY, 
+  SUPPRESS, null, null, null, dose_form_rxaui, dose_form_rxcui, dose_form, SCD_RXCUI, SCD_RXAUI, semantic_clinical_name 
+  from rxnorm_prescribe.rxnorm_scd3 rsc3;
+
+drop table if exists rxnorm_prescribe.merged_rxnorm_sbd_scd2;
+
+create table rxnorm_prescribe.merged_rxnorm_sbd_scd2 as  
+select 
+  case when sbd_rxcui is null then scd_rxcui else sbd_rxcui end as rxcui,
+  case when sbd_rxaui is null then scd_rxaui else scd_rxaui end as rxaui,
+mrsbdc.* from merged_rxnorm_sbd_scd1 mrsbdc; 
+
+/* Build ingredient tables */         
+
+drop table if exists rxnorm_prescribe.rxnorm_sbd_ingredient_count;         
 create table rxnorm_prescribe.rxnorm_sbd_ingredient_count as         
   select SBD_RXCUI, SBD_RXAUI, count(*) as number_of_ingredients from rxnorm_prescribe.rxnorm_sbd1 r1  
     join rxnorm.rxnrel rr1 on r1.sbd_rxcui = rr1.rxcui1 and rr1.RELA = 'constitutes'
@@ -87,6 +105,7 @@ create table rxnorm_prescribe.rxnorm_sbd_ingredient_count as
 
 select * from rxnorm_prescribe.rxnorm_sbd_ingredient_count where ingredient_count=1;
 
+drop table if exists rxnorm_prescribe.rxnorm_sbd_1_ingredient_1;
 create table rxnorm_prescribe.rxnorm_sbd_1_ingredient_1 as 
   select r1.*, r2.rxaui as scdc_rxaui, r2.rxcui as scdc_rxcui, r2.str as semantic_clinical_drug_component 
     from rxnorm_prescribe.rxnorm_sbd_ingredient_count r1
@@ -95,6 +114,7 @@ create table rxnorm_prescribe.rxnorm_sbd_1_ingredient_1 as
   
 /* 7500 */
 
+drop table if exists rxnorm_prescribe.rxnorm_sbd_1_ingredient_2;
 create table rxnorm_prescribe.rxnorm_sbd_1_ingredient_2 as 
   select r1.*, r2.rxaui as in_rxaui, r2.rxcui as in_rxcui, r2.str as ingredient
       from rxnorm_prescribe.rxnorm_sbd_1_ingredient_1 r1
@@ -114,12 +134,12 @@ select r1.*, null, null, null, r3.rxaui as in_rxaui, r3.rxcui as in_rxcui, r3.st
     join rxnorm.rxnrel rr2 on r2.rxcui = rr2.rxcui1 and rr2.RELA = 'ingredients_of'
     join rxnorm.rxnconso r3 on r3.rxcui = rr2.rxcui2 and r3.TTY = 'MIN' and r3.SAB = 'RXNORM'
     join rxnorm.rxnrel rr3 on r3.rxcui = rr3.RXCUI1
-    join rxnorm.rxnconso r4 on r4.rxcui = rr3.rxcui2
+    join rxnorm.rxnconso r4 on r4.rxcui = rr3.rxcui2;
     
 
 create index idx_rsb4_scd_rxaui on rxnorm_prescribe.rxnorm_sbd4(sbd_rxaui);    
 
-drop table rxnorm_prescribe.multiple_ingredients1;
+drop table if exists rxnorm_prescribe.multiple_ingredients1;
 
 create table rxnorm_prescribe.multiple_ingredients1 as
 select distinct r3.rxaui as sbd_rxaui, r3.rxcui as sbd_rxcui, r3.STR as semantic_branded_drug, rsbd.SCD_RXAUI, 
@@ -144,6 +164,8 @@ in_rxcui
 ingredient
 */
 
+drop table if exists rxnorm_prescribe.multiple_ingredients2;
+
 create table rxnorm_prescribe.multiple_ingredients2 as 
   select rsic.SBD_RXCUI, rsic.SBD_RXAUI, rsic.number_of_ingredients, null as scdc_rxaui, null as scdc_rxcui, 
   null as semantic_clinical_drug_component, mi.MIN_RXCUI, mi.min_RXAUI, mi.ingredients   
@@ -152,7 +174,7 @@ create table rxnorm_prescribe.multiple_ingredients2 as
     join rxnorm_prescribe.multiple_ingredients1 mi on rsic.sbd_rxaui = mi.sbd_rxaui;
 
 
-drop table rxnorm_prescribe.generic_name1;
+drop table if exists rxnorm_prescribe.generic_name1;
 
 create table rxnorm_prescribe.generic_name1 as 
   select * from rxnorm_prescribe.rxnorm_sbd_1_ingredient_2 t1;
@@ -171,7 +193,9 @@ in_rxaui,
 in_rxcui,
 ingredient)
   select * from rxnorm_prescribe.multiple_ingredients2;
+
   
+drop table if exists rxnorm_prescribe.generic_name2;  
 create table rxnorm_prescribe.generic_name2 as   
   select gn.SBD_RXCUI, gn.SBD_RXAUI, gn.number_of_ingredients, gn.scdc_rxcui, gn.scdc_rxaui, 
    gn.semantic_clinical_drug_component, gn.in_rxcui as generic_name_rxcui, gn.in_rxaui as generic_name_rxaui, 
@@ -226,7 +250,7 @@ select * from rxnorm_prescribe.ndc_drug_details;
 
 /* Build Ingredient Tables Linking to Component Tables */
 
-drop table rxnorm_prescribe.ingredient1;
+drop table if exists rxnorm_prescribe.ingredient1;
 
 create table rxnorm_prescribe.ingredient1 as
   select r1.rxaui as in_rxaui, r1.rxcui as in_rxcui, TTY, r1.str as ingredient, 
@@ -238,7 +262,7 @@ create table rxnorm_prescribe.ingredient1 as
     where r1.SAB = 'RXNORM' and r1.TTY in ('IN');
     
 
-drop table rxnorm_prescribe.ingredient2;
+drop table if exists  rxnorm_prescribe.ingredient2;
  
 create table rxnorm_prescribe.ingredient2 as
   select i1.*, related_form, pin_rxaui, pin_rxcui from rxnorm_prescribe.ingredient1 i1 left outer join 
@@ -247,6 +271,8 @@ create table rxnorm_prescribe.ingredient2 as
       join rxnorm.rxnrel rr1 on rr1.rxcui1 = r1.rxcui
       join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.SAB = 'RXNORM' and rr1.RELA = 'form_of'
       where r1.SAB='RXNORM' and r1.tty in ('IN')) t on t.in_rxaui = i1.in_rxaui;
+
+drop table if exists rxnorm_prescribe.relation_between_ingredient_component1;
       
 create table rxnorm_prescribe.relation_between_ingredient_component1
  select r1.str as ingredient, r1.rxcui as in_rxcui, r1.rxaui as in_rxaui, rr1.rela, 
@@ -256,6 +282,9 @@ create table rxnorm_prescribe.relation_between_ingredient_component1
     join rxnorm.rxnconso r2 on r2.rxcui = rr1.rxcui2 and r2.SAB = 'RXNORM' and r2.tty = 'SCDC'
     where r1.SAB = 'RXNORM' and r1.TTY = 'IN';
 
+
+drop table if exists rxnorm_prescribe.relation_between_ingredient_clinical_drug1;
+      
 create table rxnorm_prescribe.relation_between_ingredient_clinical_drug1 as     
  select distinct ric.*, rr1.rela as rela1, r2.RXCUI as scd_rxcui, r2.RXAUI as scd_rxaui, r2.STR as semantic_clinical_drug 
   from rxnorm_prescribe.relation_between_ingredient_component1 ric 

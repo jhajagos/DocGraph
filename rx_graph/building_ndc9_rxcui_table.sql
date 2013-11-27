@@ -93,12 +93,13 @@ select count(distinct nr.synthectic_rxcui) from rx_graph.rx_graph_ndc9_rxcui nn9
   join rx_graph.ndc9_rxnorm nr on nr.ndc9 = nn9.ndc9;
 /* 5633*/
 
+drop table if exists  rxnorm_prescribe.ndc9_synthetic_rxcui;
+
 create table rxnorm_prescribe.ndc9_synthetic_rxcui (
   synthetic_rxcui varchar(511),
   synthetic_label varchar(1023),
   compact_counter integer,
   ndc9 char(9));
-
 SET group_concat_max_len=100000;
 
 insert rxnorm_prescribe.ndc9_synthetic_rxcui (synthetic_rxcui, synthetic_label, compact_counter, ndc9)
@@ -109,9 +110,9 @@ insert rxnorm_prescribe.ndc9_synthetic_rxcui (synthetic_rxcui, synthetic_label, 
         count(distinct rxcui) as compact_counter, ndc9, 
         GROUP_CONCAT(distinct label order by label asc separator '|') as synthetic_label_text from (
         select distinct r1.rxcui,  rn1.atv as ndc, left(rn1.atv,9) as ndc9, r1.str as label  
-          from rxnconso r1 
-          join rxnsat rn1 on r1.rxaui = rn1.rxaui and rn1.atn = 'NDC'
-            where char_length(rn1.atv) = 11 and r1.SAB = 'RXNORM' and r1.SUPPRESS = 'N' and r1.TTY = 'SBD') t group by ndc9) t
+          from rxnorm.rxnconso r1 
+          join rxnorm.rxnsat rn1 on r1.rxaui = rn1.rxaui and rn1.atn = 'NDC'
+            where char_length(rn1.atv) = 11 and r1.SAB = 'RXNORM' and r1.SUPPRESS = 'N' and r1.TTY in ('SCD', 'SBD')) t group by ndc9) t
             order by compact_counter desc;
           
   
