@@ -1,68 +1,5 @@
 /* We want to map RxCUIs to ATC codes s*/
 
-
-use RxNorm;
-
-select * from RxNorm.RxnConso where sab='ATC' and (TTY = 'RXN_PT' or TTY = 'RXN_IN') order by code;
-/* 661 */
-
-select * from RxNorm.RxnConso where sab='ATC' and (TTY = 'PT') order by str;
-/* 1255 */
-
-select * from RxNorm.RxnConso where sab='ATC' and (TTY = 'PT' or TTY = 'IN') order by code;
-/* 5771 */
-
-select * from RxNorm.RxnConso where sab='ATC' and (TTY = 'IN') order by code;
-/* 4516 */
-
-select distinct RXCUI from RxNorm.RxnConso where sab='ATC' and (TTY = 'IN') order by code;
-/* 3877 */
-
-select * from RxNorm.RxnConso r1 
-  join RxNorm.RxnConso r2 on 
-r2.RXCUI = r1.RXCUI and (r2.sab in ('RXNORM'))
-where r1.sab='ATC' and r1.TTY = 'IN' and r2.TTY = 'IN'
-order by r1.code;
-/* 2742 */
-
-select distinct r1.RXCUI from RxNorm.RxnConso r1 
-  join RxNorm.RxnConso r2 on 
-r2.RXCUI = r1.RXCUI and (r2.sab in ('RXNORM'))
-where r1.sab='ATC' and r1.TTY = 'IN' and r2.TTY = 'IN'
-order by r1.code;
-
-/* 2195 */
-
-/* Which ATC codes are not mapped */
-
-select  distinct r1.str, r1.rxcui from RxNorm.RxnConso r1 
-  left outer join RxNorm.RxnConso r2 on 
-  r2.RXCUI = r1.RXCUI and r2.sab in ('RXNORM') and r2.TTY = 'IN'
-  where r1.sab='ATC' and r1.TTY = 'IN'  and r2.RXCUI is null
-  order by r1.str;
-
-/* 1684 */
-
-select  distinct r1.rxcui from RxNorm.RxnConso r1 
-  left outer join RxNorm.RxnConso r2 on 
-  r2.RXCUI = r1.RXCUI and r2.sab in ('RXNORM') and r2.TTY = 'IN'
-  where r1.sab='ATC' and r1.TTY = 'IN'  and r2.RXCUI is null
-  order by r1.str;
-
-/* 1682 */
-
-/* 1682 + 2195 = 3877 */
-
-/* Count which ingredients we will need to disambiguate */
-
-select count(*), r1.str from RxNorm.RxnConso r1 
-  join RxNorm.RxnConso r2 on 
-  r2.RXCUI = r1.RXCUI and (r2.sab in ('RXNORM'))
-  where r1.sab='ATC' and r1.TTY = 'IN' and r2.TTY = 'IN'
-  group by r1.str having count(*) > 1 order by count(*) desc;
-
-/* 322 */
-
 create index idx_rxn_code on RxNorm.RxnConso(code);
 create index idx_rel_rc1 on RxNorm.RxnRel(rxcui1);
 create index idx_rel_rc2 on RxNorm.RxnRel(rxcui2);
@@ -71,66 +8,6 @@ create index idx_rel_ra2 on RxNorm.RxnRel(rxaui2);
 create index idx_rel_rela on RxNorm.RxnRel(rela);
 create index idx_rel_rela on RxNorm.RxnCONSO(rela);
 
-select * from RxnREL where sab = 'ATC';
-/* 11514 */
-
-select distinct RELA from RxnREL where sab = 'RXNORM';
-
-/*
-RELA
-
-consists_of
-constitutes
-contained_in
-contains
-dose_form_of
-doseformgroup_of
-form_of
-has_dose_form
-has_doseformgroup
-has_form
-has_ingredient
-has_ingredients
-has_part
-has_precise_ingredient
-has_quantified_form
-has_tradename
-included_in
-includes
-ingredient_of
-ingredients_of
-inverse_isa
-isa
-part_of
-precise_ingredient_of
-quantified_form_of
-reformulated_to
-reformulation_of
-tradename_of
-
-*/
-
-select distinct ATN from RxnSat where sab = 'RXNORM';
-
-select distinct * from RxnSat where sab = 'RXNORM' and ATN like 'RXTERM_FORM';
-
-
-select * from RxnSat where sab = 'ATC';
-select * from RxnREL where sab = 'RXNORM' and rela = 'ingredient_of';
-
-select tt.rxcui, tt.STR, tt.CODE, r5.str, r5.rxcui from RxnREL  rr join (
-    select distinct r3.rxcui, r3.str, r3.code from RxnConso r3 join 
-      (select r1.str from RxNorm.RxnConso r1 
-        join RxNorm.RxnConso r2 on 
-        r2.RXCUI = r1.RXCUI and (r2.sab in ('RXNORM'))
-        where r1.sab='ATC' and r1.TTY = 'IN' and r2.TTY = 'IN'
-        group by r1.str having count(*) > 1) t on t.str = r3.str 
-      and r3.TTY = 'IN' and r3.SAB = 'ATC') tt 
-    on rr.SAB = 'RXNORM' and rr.RELA = 'ingredient_of' 
-    and rr.RXCUI2 = tt.rxcui
-    join RxnConso r5 on r5.rxcui = rr.rxcui1 and r5.sab = 'RXNORM' and TTY = 'SCDF'
-    order by tt.str, tt.code, r5.str;
-    
     
     
 /* Create the ATC Table */
@@ -1262,7 +1139,7 @@ insert into rxnorm_prescribe.atc_ingredient_link_to_rxcui_curated (rxcui, atc5_n
 select distinct rxcui, atc5_name, atc5, atc_code_concat, atc_name_concat, synthetic_dose_form_group, synthetic_dfg_rxaui, dose_form, dose_form_rxaui, dose_form_rxcui, 71 as step  
     from rxnorm_prescribe.atc_ingredient_link_to_in_rxcui2 where atc2 = 'N02' 
     and  (synthetic_dose_form_group like 'Oral Product%' or synthetic_dose_form_group like 'Injectable Product%'
-    or synthetic_dose_form_group like 'Transdermal Product'
+    or synthetic_dose_form_group like 'Transdermal Product' or synthetic_dose_form_group like 'Rectal Product%'
     );
 
 
@@ -1763,35 +1640,73 @@ create table rxnorm_prescribe.drug_details_with_atc as
      ;
 
 create unique index idx_rpdda_sbd_rxaui on rxnorm_prescribe.drug_details_with_atc(sbd_rxaui); 
+create index idx_rpdda_scd_rxaui on rxnorm_prescribe.drug_details_with_atc(scd_rxaui);
 create index idx_rpdda_sbd_rxcui on rxnorm_prescribe.drug_details_with_atc(sbd_rxcui); 
-
+create index idx_rpdda_scd_rxcui on rxnorm_prescribe.drug_details_with_atc(scd_rxcui); 
 
 select count(*) from rxnorm_prescribe.drug_details_with_atc where synthetic_atc5 is null;
 /* 1609 */
 
 drop table if exists rxnorm_prescribe.ndc_drug_details_with_atc;
-
 create table rxnorm_prescribe.ndc_drug_details_with_atc as 
   select ndd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name from rxnorm_prescribe.ndc_drug_details ndd 
-    left outer join rxnorm_prescribe.scd_mapped_to_synthetic_atc smsa on ndd.sbd_rxaui = smsa.sbd_rxaui
+    left outer join rxnorm_prescribe.scd_mapped_to_synthetic_atc smsa on ndd.scd_rxaui = smsa.scd_rxaui
     where ndd.rxn_human_drug is not null
      order by smsa.synthetic_atc5, ndd.generic_name;
      
 create unique index idx_rp_nddandc on rxnorm_prescribe.ndc_drug_details_with_atc(ndc);
      
 create unique index idx_ndc9_synthetic_rxcui on rxnorm_prescribe.ndc9_synthetic_rxcui(ndc9);
-alter table rxnorm_prescribe.ndc9_synthetic_rxcui add synthetic_rxcui_key varchar(512);
-update  rxnorm_prescribe.ndc9_synthetic_rxcui set synthetic_rxcui_key = left(synthetic_rxcui,512);
+alter table rxnorm_prescribe.ndc9_synthetic_rxcui drop synthetic_rxcui_key;
+alter table rxnorm_prescribe.ndc9_synthetic_rxcui add synthetic_rxcui_key varchar(255);
+update  rxnorm_prescribe.ndc9_synthetic_rxcui set synthetic_rxcui_key = left(synthetic_rxcui,255);
 create  index idx_srxcui_ndc_sr on rxnorm_prescribe.ndc9_synthetic_rxcui(synthetic_rxcui_key);
 
 create  index idx_sbdrxcui_drug_details on rxnorm_prescribe.drug_details_with_atc(sbd_rxcui);
-
+create  index idx_scdrxcui_drug_details on rxnorm_prescribe.drug_details_with_atc(scd_rxcui);
 
 drop table if exists rxnorm_prescribe.ndc9_drug_details_with_atc;
-
 create table rxnorm_prescribe.ndc9_drug_details_with_atc as 
-select * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr left outer join 
-  rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.sbd_rxcui;
+  select * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr join 
+    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.sbd_rxcui and dd.TTY = 'SBD';
+  
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify sbd_rxaui varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify sbd_rxcui varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify bn_rxcui varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify bn_rxaui varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify brand_name	varchar(3000);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify semantic_branded_name	varchar(3000);
 
+
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify SAB	varchar(20);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify TTY	varchar(20);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify dose_form_rxaui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify dose_form_rxcui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify dose_form	varchar(3000);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify scd_rxaui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify scd_rxcui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify semantic_clinical_drug	varchar(3000);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify number_of_ingredients	bigint(21);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify generic_name_rxcui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify generic_name_rxaui	varchar(8);
+alter table rxnorm_prescribe.ndc9_drug_details_with_atc modify generic_name	varchar(3000);    
 
 create unique index idx_ndc9_dd_ndc9 on rxnorm_prescribe.ndc9_drug_details_with_atc(ndc9);
+
+insert into rxnorm_prescribe.ndc9_drug_details_with_atc
+  select distinct * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr join 
+    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.scd_rxcui and dd.TTY = 'SCD'
+      and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc)
+    ;
+
+insert into rxnorm_prescribe.ndc9_drug_details_with_atc
+  select * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr left outer join 
+    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.sbd_rxcui and dd.TTY = 'SBD'
+    and dd.sbd_rxcui is null  and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc);
+
+ insert into rxnorm_prescribe.ndc9_drug_details_with_atc
+  select distinct * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr left outer join 
+    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.scd_rxcui and dd.TTY = 'SCD'
+      and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc) and dd.sbd_rxcui is null;
+
+select count(distinct left(ndc, 9)) from rxnorm_prescribe.ndc_drug_details;

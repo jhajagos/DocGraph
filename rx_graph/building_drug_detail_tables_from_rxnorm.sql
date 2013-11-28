@@ -71,35 +71,10 @@ create table rxnorm_prescribe.rxnorm_scd2 as
 
 drop table if exists rxnorm_prescribe.rxnorm_scd3;        
 create table rxnorm_prescribe.rxnorm_scd3 as
-  select * from rxnorm_prescribe.rxnorm_scd2 where SCD_RXCUI not in (select distinct SCD_RXCUI from rxnorm_prescribe.rxnorm_sbd4);
-
-/* Merge the SBD and SCD drugs */
-
-drop table if exists rxnorm_prescribe.merged_rxnorm_sbd_scd1;
-
-create table rxnorm_prescribe.merged_rxnorm_sbd_scd1 as
-  select SBD_RXCUI, SBD_RXAUI, semantic_branded_name, rxn_available_string, rxterm_form, rxn_human_drug, SAB, TTY, 
-    SUPPRESS, bn_rxcui, bn_rxaui, brand_name, dose_form_rxaui, dose_form_rxcui, dose_form, scd_rxaui, scd_rxcui, semantic_clinical_drug
-  from rxnorm_prescribe.rxnorm_sbd4 rsb4
-    union
-select null, null, null, rxn_available_string, rxterm_form, rxn_human_drug, SAB, TTY, 
-  SUPPRESS, null, null, null, dose_form_rxaui, dose_form_rxcui, dose_form, SCD_RXCUI, SCD_RXAUI, semantic_clinical_name 
-  from rxnorm_prescribe.rxnorm_scd3 rsc3;
-
-/* Create a table that merges that uses either the SCD or SBD as the primary key */
-
-drop table if exists rxnorm_prescribe.merged_rxnorm_sbd_scd2;
-
-create table rxnorm_prescribe.merged_rxnorm_sbd_scd2 as  
-select 
-  case when sbd_rxcui is null then scd_rxcui else sbd_rxcui end as rxcui,
-  case when sbd_rxaui is null then scd_rxaui else scd_rxaui end as rxaui,
-mrsbdc.* from rxnorm_prescribe.merged_rxnorm_sbd_scd1 mrsbdc; 
-
-create index idx_mrss_rxcui  on rxnorm_prescribe.merged_rxnorm_sbd_scd2(rxcui);
-create index idx_mrss_rxaui  on rxnorm_prescribe.merged_rxnorm_sbd_scd2(rxaui);
+  select * from rxnorm_prescribe.rxnorm_scd2; /*where SCD_RXCUI not in (select distinct SCD_RXCUI from rxnorm_prescribe.rxnorm_sbd4);*/
 
 
+create index idx_rs3_scd_rxcui on rxnorm_prescribe.rxnorm_scd(SCD_RXAUI);
 /* Build ingredient count tables */         
 
 drop table if exists rxnorm_prescribe.rxnorm_scd_ingredient_count;         
@@ -314,17 +289,36 @@ alter table rxnorm_prescribe.drug_details modify semantic_branded_name	varchar(3
 insert into rxnorm_prescribe.drug_details 
   select * from rxnorm_prescribe.scd_drug_details;
 
+
+  
+  
+create index dd_sdbd_rxcui on rxnorm_prescribe.drug_details(sbd_rxcui);
+create index dd_sbbd_rxaui on rxnorm_prescribe.drug_details(sbd_rxaui);
+create index dd_scbd_rxcui on rxnorm_prescribe.drug_details(scd_rxcui);
+create index dd_scbd_rxaui on rxnorm_prescribe.drug_details(scd_rxaui);
+
+
 drop table if exists rxnorm_prescribe.ndc_drug_details;
 
-create table rxnorm_prescribe.ndc_drug_details as    
- select distinct left(rs.ATV,11) as ndc, dd.*, now() as created_at 
-    from rxnorm_prescribe.drug_details dd join rxnorm.rxnsat rs on rs.rxaui = dd.scd_rxaui
-      and rs.ATN = 'NDC'
-   union
+create table rxnorm_prescribe.ndc_drug_details as
   select distinct left(rs.ATV,11) as ndc, dd.*, now() as created_at 
     from rxnorm_prescribe.drug_details dd join rxnorm.rxnsat rs on rs.rxaui = dd.sbd_rxaui
-      and rs.ATN = 'NDC'
-      ;
+      and rs.ATN = 'NDC' and dd.TTY = 'SBD';
+      
+alter table rxnorm_prescribe.ndc_drug_details modify sbd_rxaui varchar(8);
+alter table rxnorm_prescribe.ndc_drug_details modify sbd_rxcui varchar(8);
+alter table rxnorm_prescribe.ndc_drug_details modify bn_rxcui varchar(8);
+alter table rxnorm_prescribe.ndc_drug_details modify bn_rxaui varchar(8);
+alter table rxnorm_prescribe.ndc_drug_details modify brand_name	varchar(3000);
+alter table rxnorm_prescribe.ndc_drug_details modify semantic_branded_name	varchar(3000);
+  
+insert into rxnorm_prescribe.ndc_drug_details
+  select distinct left(rs.ATV,11) as ndc, dd.*, now() as created_at 
+    from rxnorm_prescribe.drug_details dd join rxnorm.rxnsat rs on rs.rxaui = dd.scd_rxaui
+      and rs.ATN = 'NDC' and dd.TTY = 'SCD';
+      
+create unique index idx_ndd_ndc on rxnorm_prescribe.ndc_drug_details(ndc);
+      
       
 create unique index idx_uniq_ndc_dd on rxnorm_prescribe.ndc_drug_details(ndc);
  

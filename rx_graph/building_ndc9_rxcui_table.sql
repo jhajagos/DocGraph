@@ -94,7 +94,6 @@ select count(distinct nr.synthectic_rxcui) from rx_graph.rx_graph_ndc9_rxcui nn9
 /* 5633*/
 
 drop table if exists  rxnorm_prescribe.ndc9_synthetic_rxcui;
-
 create table rxnorm_prescribe.ndc9_synthetic_rxcui (
   synthetic_rxcui varchar(511),
   synthetic_label varchar(1023),
