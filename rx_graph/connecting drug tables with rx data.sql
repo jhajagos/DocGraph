@@ -15,7 +15,7 @@ select rrn.*, nddwa.synthetic_rxcui, nddwa.synthetic_label, nddwa.compact_counte
     nddwa.synthetic_dose_form_group, nddwa.counter, nddwa.synthetic_atc5, nddwa.synthetic_atc5_name,
     nspt.*
   from rx_graph.rx_graph_ndc9 rrn 
-    join rxnorm_prescribe.ndc9_drug_details_with_atc nddwa on (rrn.ndc9 = nddwa.ndc9)
+    left outer join rxnorm_prescribe.ndc9_drug_details_with_atc nddwa on (rrn.ndc9 = nddwa.ndc9)
     join referral.npi_summary_primary_taxonomy nspt on nspt.npi = rrn.npi
      where nspt.state = 'WY';
     

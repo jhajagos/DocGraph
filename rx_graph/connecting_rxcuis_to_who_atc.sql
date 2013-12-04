@@ -1630,14 +1630,188 @@ insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, 
 insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
   select distinct dd.scd_rxcui, dd.scd_rxaui, semantic_clinical_drug, 1, 'R01BA02', 'pseudoephedrine', 2 as step from rxnorm_prescribe.drug_details dd where generic_name = 'Pseudoephedrine';
 
-drop table if exists rxnorm_prescribe.drug_details_with_atc;
 
-create table rxnorm_prescribe.drug_details_with_atc as 
-  select dd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name from rxnorm_prescribe.drug_details dd 
+/* Step 3 */
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'S01EC01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'S01EC01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Acetazolamide';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'C02AC01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'C02AC01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Clonidine';
+/*
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R01AX03', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R01AX03'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Ipratropium';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R03BB01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R03BB01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Ipratropium';
+*/
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'M03BX', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'M03BX'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'metaxalone';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'H03AA02', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'H03AA02'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Triiodothyronine';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'A05AA02', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'A05AA02'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Ursodeoxycholate';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'H03AA05', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'H03AA05'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'thyroid (USP)';
+/*
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R03BB01  ', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R03BB01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Ipratropium';
+*/
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'C09CA08', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'C09CA08'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'olmesartan';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'M05BA06', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'M05BA06'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Ibandronate';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'D07AC04', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'D07AC04'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'fluocinolone';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'C02AC01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'C02AC01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Clonidine';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'L03AX13', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'L03AX13'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Glatiramer';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'D11AH02  ', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'D11AH02  '
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Pimecrolimus';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'C05BA04', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'C05BA04'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Pentosan Polysulfate';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'B03XA01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'B03XA01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Epoetin Alfa';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R03AC13', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R03AC13'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'formoterol';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'A10AB01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'A10AB01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'NPH Insulin, Human';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'C10AX06', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'C10AX06'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Omega-3 Acid Ethyl Esters (USP)';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'G03CA57  ', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'G03CA57  '
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Estrogens, Esterified (USP)';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'A10AB01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'A10AB01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'NPH Insulin, Human';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'A10AB05', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'A10AB05'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Insulin, Aspart, Human';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'A10AB05', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'A10AB05'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Insulin, Aspart Protamine, Human / Insulin, Aspart, Human';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'N06BA07', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'N06BA07'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'armodafinil';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'D04AA10', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'D04AA10'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Promethazine';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'D11AH01', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'D11AH01'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Tacrolimus';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'M03BX', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'M03BX'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'metaxalone';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'D05BB02', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'D05BB02'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Acitretin';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R03BB04', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R03BB04'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'tiotropium';
+
+insert into rxnorm_prescribe.scd_mapped_to_synthetic_atc (scd_rxcui, scd_rxaui, semantic_clinical_drug, counter, synthetic_atc5, synthetic_atc5_name, step)
+  select distinct dd.scd_rxcui,dd.scd_rxaui, dd.semantic_clinical_drug, 1, 'R03BB04', ai.atc5_name, 3 as step from rxnorm_prescribe.drug_details dd
+    join rxnorm_prescribe.atc_ingredients ai on ai.atc5 = 'R03BB04'
+where scd_rxaui not in (select scd_rxaui from rxnorm_prescribe.scd_mapped_to_synthetic_atc) and generic_name = 'Varicella-Zoster Virus Vaccine Live (Oka-Merck) strain';
+
+/* Build Drug Tables */
+
+drop table if exists rxnorm_prescribe.drug_details_with_atc1;
+create table rxnorm_prescribe.drug_details_with_atc1 as 
+  select dd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name,  left(smsa.synthetic_atc5,7) as first_atc5 from rxnorm_prescribe.drug_details dd 
     left outer join rxnorm_prescribe.scd_mapped_to_synthetic_atc smsa on dd.scd_rxaui = smsa.scd_rxaui
     where dd.rxn_human_drug is not null
      order by smsa.synthetic_atc5, dd.generic_name
      ;
+
+create unique index idx_ai_atc5 on rxnorm_prescribe.atc_ingredients(atc5);
+create index idx_ddwa1_first_atc5 on rxnorm_prescribe.drug_details_with_atc1(first_atc5);
+
+drop table if exists rxnorm_prescribe.drug_details_with_atc;
+create table rxnorm_prescribe.drug_details_with_atc as 
+select ddwa1.*, ai.ATC1, ai.ATC1_Name, ai.ATC2, ai.ATC2_Name, ai.ATC3, ai.ATC3_Name, ai.ATC4, ai.ATC4_Name, ai.ATC5, 
+  ai.ATC5_Name, 
+    case when ai.ATC5 is null then concat('Z', ' - ', ddwa1.generic_name) else concat(ddwa1.synthetic_atc5, ' - ', ddwa1.generic_name) end 
+    as synthetic_atc5_with_generic_name
+    from 
+    rxnorm_prescribe.drug_details_with_atc1 ddwa1 left outer join rxnorm_prescribe.atc_ingredients ai on ddwa1.first_atc5 = ai.atc5
+     order by ddwa1.synthetic_atc5, ddwa1.generic_name
+    ;
 
 create unique index idx_rpdda_sbd_rxaui on rxnorm_prescribe.drug_details_with_atc(sbd_rxaui); 
 create index idx_rpdda_scd_rxaui on rxnorm_prescribe.drug_details_with_atc(scd_rxaui);
@@ -1647,13 +1821,28 @@ create index idx_rpdda_scd_rxcui on rxnorm_prescribe.drug_details_with_atc(scd_r
 select count(*) from rxnorm_prescribe.drug_details_with_atc where synthetic_atc5 is null;
 /* 1609 */
 
-drop table if exists rxnorm_prescribe.ndc_drug_details_with_atc;
-create table rxnorm_prescribe.ndc_drug_details_with_atc as 
-  select ndd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name from rxnorm_prescribe.ndc_drug_details ndd 
+drop table if exists rxnorm_prescribe.ndc_drug_details_with_atc1;
+create table rxnorm_prescribe.ndc_drug_details_with_atc1 as 
+  select ndd.*, smsa.counter, smsa.synthetic_atc5, smsa.synthetic_atc5_name, left(smsa.synthetic_atc5,7) as first_atc5 
+    from rxnorm_prescribe.ndc_drug_details ndd 
     left outer join rxnorm_prescribe.scd_mapped_to_synthetic_atc smsa on ndd.scd_rxaui = smsa.scd_rxaui
     where ndd.rxn_human_drug is not null
      order by smsa.synthetic_atc5, ndd.generic_name;
-     
+
+create index idx_nddwa1_first_atc5 on rxnorm_prescribe.ndc_drug_details_with_atc1(first_atc5);
+
+drop table if exists rxnorm_prescribe.ndc_drug_details_with_atc;
+create table ndc_rxnorm_prescribe.drug_details_with_atc as 
+select nddwa1.*, ai.ATC1, ai.ATC1_Name, ai.ATC2, ai.ATC2_Name, ai.ATC3, ai.ATC3_Name, ai.ATC4, ai.ATC4_Name, ai.ATC5, 
+  ai.ATC5_Name, 
+    case when ai.ATC5 is null then concat('Z', ' - ', nddwa1.generic_name) else concat(nddwa1.synthetic_atc5, ' - ', nddwa1.generic_name) end 
+    as synthetic_atc5_with_generic_name
+    from 
+    rxnorm_prescribe.ndc_drug_details_with_atc1 nddwa1 left outer join rxnorm_prescribe.atc_ingredients ai on nddwa1.first_atc5 = ai.atc5
+     order by nddwa1.synthetic_atc5, nddwa1.generic_name
+    ;
+
+
 create unique index idx_rp_nddandc on rxnorm_prescribe.ndc_drug_details_with_atc(ndc);
      
 create unique index idx_ndc9_synthetic_rxcui on rxnorm_prescribe.ndc9_synthetic_rxcui(ndc9);
@@ -1699,14 +1888,15 @@ insert into rxnorm_prescribe.ndc9_drug_details_with_atc
       and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc)
     ;
 
-insert into rxnorm_prescribe.ndc9_drug_details_with_atc
-  select * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr left outer join 
-    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.sbd_rxcui and dd.TTY = 'SBD'
-    and dd.sbd_rxcui is null  and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc);
+drop table if exists rxnorm_prescribe.ndc9_with_drug_details;
+create table rxnorm_prescribe.ndc9_with_drug_details as
+ select distinct n9sr.ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc n9ddwa join rxnorm_prescribe.ndc9_synthetic_rxcui n9sr 
+  on n9sr.ndc9 = n9ddwa.ndc9;
 
- insert into rxnorm_prescribe.ndc9_drug_details_with_atc
-  select distinct * from rxnorm_prescribe.ndc9_synthetic_rxcui nsr left outer join 
-    rxnorm_prescribe.drug_details_with_atc dd on nsr.synthetic_rxcui_key = dd.scd_rxcui and dd.TTY = 'SCD'
-      and nsr.ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_drug_details_with_atc) and dd.sbd_rxcui is null;
+create unique index idx_n9wddwa_dd_ndc9 on rxnorm_prescribe.ndc9_with_drug_details(ndc9);
 
-select count(distinct left(ndc, 9)) from rxnorm_prescribe.ndc_drug_details;
+insert into rxnorm_prescribe.ndc9_drug_details_with_atc 
+  (synthetic_rxcui,synthetic_label,compact_counter,ndc9,synthetic_rxcui_key)	
+    select synthetic_rxcui,synthetic_label,compact_counter,ndc9,synthetic_rxcui_key from rxnorm_prescribe.ndc9_synthetic_rxcui 
+    where ndc9 not in (select ndc9 from rxnorm_prescribe.ndc9_with_drug_details);
+    
