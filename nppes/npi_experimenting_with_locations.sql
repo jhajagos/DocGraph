@@ -75,7 +75,10 @@ insert address (first_line, second_line, city, state, postal_code, country_code,
   select nc.first_line, nc.second_line, nc.city, nc.state, nc.postal_code, nc.country_code, 
     nc.address_flattened, nc.address_formatted, nc.address_hash from nppes_contact nc 
    join temp_max_id_address tmi on tmi.address_hash = nc.address_hash and tmi.max_id = tc.id;  
- 
+
+
+ update address set zip5 = left(postal_code, 5), zip4 = substring(postal_code, 6);
+
 alter table nppes_contact drop column first_line;
 alter table nppes_contact drop column second_line;
 alter table nppes_contact drop column city;
@@ -85,5 +88,3 @@ alter table nppes_contact drop column address_formatted;
 alter table nppes_contact drop column address_flattened;
 
 select * from nppes_contact where address_hash = '*AB9D6C2A591E83F44FEA81E553A80FAA30C3E079';
-
-

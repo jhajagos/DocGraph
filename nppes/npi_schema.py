@@ -407,7 +407,7 @@ from nppes_flat nf where %s;\n\n""" % (provider_taxonomy_insert_statement, i + 1
     print(update_table_sql)
 
     create_address_table = """
-    drop table if exists nppes_contact;
+ drop table if exists nppes_contact;
 create table nppes_contact (
  id  integer auto_increment primary key,
  address_type varchar(15),
@@ -426,9 +426,6 @@ create table nppes_contact (
  zip5 varchar(5),
  zip4 varchar(4)
 );
-/*alter table nppes_contact add address_flattened varchar(1023); */
-
-alter table nppes_contact add id integer auto_increment primary key;
 
 insert into nppes_contact (address_type, npi, first_line, second_line, city, state, postal_code, country_code, phone, fax)
   select 'business',nh.npi, nh.Provider_First_Line_Business_Mailing_Address, nh.Provider_Second_Line_Business_Mailing_Address, nh.Provider_Business_Mailing_Address_City_Name,
@@ -474,6 +471,8 @@ create table address
     address_flattened varchar(1023),
     address_formatted varchar(1023),
     address_hash varchar(1023),
+    zip5 varchar(5),
+    zip4 varchar(4),
     latitude float,
     longitude float
     );
@@ -490,6 +489,9 @@ alter table nppes_contact drop column state;
 alter table nppes_contact drop column postal_code;
 alter table nppes_contact drop column address_formatted;
 alter table nppes_contact drop column address_flattened;
+
+update address set zip5 = left(postal_code, 5), zip4 = substring(postal_code, 6);
+
     """
 
     print(create_address_table)
@@ -502,8 +504,8 @@ create index idx_oth_prov_id_npi on other_provider_identifiers(npi);
 create index idx_provider_licenses on provider_licenses(npi);
 create index idx_address_addr_hash on address(address_hash);
 create index idx_nppes_contact_hash on nppes_contact(address_hash);
-#create index idx_addr_zip4 on address(zip4);
-#create index idx_addr_zip5 on address(zip5);
+create index idx_addr_zip4 on address(zip4);
+create index idx_addr_zip5 on address(zip5);
 create index idx_addr_city on address(city);
 create index idx_addr_state on address(state);
 create index idx_addr_latitude on address(latitude);
@@ -515,7 +517,7 @@ create index idx_addr_latitude on address(latitude);
 if __name__ == "__main__":
     # Hardcoded file names
     # The assumption in this script that you are using a Unix like file system
-    main("/data/npi/npidata_20050523-20130113.csv", "/data/npi/nucc_taxonomy_121.csv")
+    main("/tmp/npidata_20050523-20140309.csv", "/tmp/nucc_taxonomy_140.csv")
 
     #Loading the files
     #python npi_schema.py > npi_schema.sql
