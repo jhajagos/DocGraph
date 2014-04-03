@@ -2051,7 +2051,7 @@ create table address
 insert address (first_line, second_line, city, state, postal_code, country_code, address_flattened, address_formatted, address_hash)
   select nc.first_line, nc.second_line, nc.city, nc.state, nc.postal_code, nc.country_code,
     nc.address_flattened, nc.address_formatted, nc.address_hash from nppes_contact nc
-   join temp_max_id_address tmi on tmi.address_hash = nc.address_hash and tmi.max_id = tc.id;
+   join temp_max_id_address tmi on tmi.address_hash = nc.address_hash and tmi.max_id = nc.id;
 
 update address set zip5 = left(postal_code, 5), zip4 = substring(postal_code, 6);
 
@@ -2066,7 +2066,6 @@ alter table nppes_contact drop column address_flattened;
 
 /* Add indices to the tables */
 
-create unique index pk_npi_nppes_header on npi.nppes_header(npi);
 create unique index pk_npi_hct_proc on healthcare_provider_taxonomy_processed(npi);
 create index idx_oth_prov_id_npi on other_provider_identifiers(npi);
 create index idx_provider_licenses on provider_licenses(npi);

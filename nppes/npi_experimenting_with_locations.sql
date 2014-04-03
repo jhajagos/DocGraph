@@ -87,4 +87,4 @@ alter table nppes_contact drop column postal_code;
 alter table nppes_contact drop column address_formatted;
 alter table nppes_contact drop column address_flattened;
 
-select * from nppes_contact where address_hash = '*AB9D6C2A591E83F44FEA81E553A80FAA30C3E079';
+select * from nppes_contact where address_hash = '*AB9D6C2A591E83F44FEA81E553A80FAA30C3E079';o6

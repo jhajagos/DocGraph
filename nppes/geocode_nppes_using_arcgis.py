@@ -142,7 +142,7 @@ def extract_addresses_to_csv(directory, n=10000):
     j = 1
 
     query_result_size = n * 10
-    cursor.execute("select count(*) as counter from address where country_code = 'US'")
+    cursor.execute("select count(*) as counter from address where country_code = 'US' and geocode_method is NULL")
     r = list(cursor)
     record_count = r[0][0]
     logger("Transferring %s records" % record_count)
@@ -151,7 +151,7 @@ def extract_addresses_to_csv(directory, n=10000):
     while (h * query_result_size) < (record_count + query_result_size):
         query_string = """select first_line as address, city as city, state as state, zip5 as zip,
         address_hash as address_hash from address where country_code = 'US'
-        and address_hash > '%s'
+        and address_hash > '%s'and geocode_method is NULL
         order by address_hash limit %s;""" % (address_hash, query_result_size)
 
         logger(query_string)
@@ -165,7 +165,7 @@ def extract_addresses_to_csv(directory, n=10000):
                 logger("Writing file '%s'" % csv_full_file_name)
                 fwc = open(csv_full_file_name, "wb")
                 csv_writer = csv.writer(fwc)
-                csv_writer.writerow(header)
+                # csv_writer.writerow(header)
                 j += 1
 
             address_hash = row.address_hash
@@ -186,7 +186,7 @@ def extract_city_state_to_csv(directory):
         csv_writer = csv.writer(fwc)
         csv_writer.writerow(header)
 
-        cursor.execute("""select distinct city, state from address where country_code = 'US'""")
+        cursor.execute("""select distinct city, state from address where country_code = 'US' and geocode_method is NULL""")
         for row in cursor:
             csv_writer.writerow([row.city, row.state])
 
@@ -203,7 +203,7 @@ def extract_zip_to_csv(directory):
         csv_writer = csv.writer(fwc)
         csv_writer.writerow(header)
 
-        cursor.execute("""select distinct zip5 as zip from address where country_code = 'US'""")
+        cursor.execute("""select distinct zip5 as zip from address where country_code = 'US' and geocode_method is NULL""")
         for row in cursor:
             csv_writer.writerow([row.zip])
 
@@ -213,7 +213,8 @@ def extract_zip_to_csv(directory):
 
 def extract_zip4_to_csv(directory, n=10000):
     cursor = get_new_cursor()
-    cursor.execute("""select distinct zip5 as zip, zip4 as zip4 from address where country_code = 'US'""")
+    cursor.execute("""select distinct zip5 as zip, zip4 as zip4 from address where country_code = 'US' and
+  geocode_method is null""")
 
     schema_dict = load_schema_ini_from_json(directory)
 
@@ -227,7 +228,7 @@ def extract_zip4_to_csv(directory, n=10000):
             logger("Writing file '%s'" % csv_file_name)
             fwc = open(csv_full_file_name, "wb")
             if csv_file_name in schema_dict:
-                schema_dict.pop(csv_file_name, None)
+               schema_dict.pop(csv_file_name, None)
             schema_dict = add_entry_into_schema_dict(schema_dict, csv_file_name, header)
             csv_writer = csv.writer(fwc, dialect="excel", quoting=csv.QUOTE_ALL)
             csv_writer.writerow(header)
@@ -307,7 +308,7 @@ def write_geocode_city_state_csv_to_sql(directory):
                 sql_query = "update address set latitude = %s, longitude = %s, geocode_method = 'city_state'" % (geo_dict["Y"],
                                                                                                           geo_dict["X"])
                 sql_query += " where city = '%s' and state = '%s'" % (geo_dict["city"], geo_dict["state"])
-                sql_query += "and latitude is not null;\n"
+                sql_query += "and latitude is null;\n"
                 fws.write(sql_query)
 
 
@@ -320,11 +321,11 @@ def write_geocode_zip_csv_to_sql(directory):
             geo_csv_dict = csv.DictReader(fc)
             for geo_dict in geo_csv_dict:
                 sql_query = "update address set latitude = %s, longitude = %s, geocode_method = 'zip'" % (geo_dict["Y"], geo_dict["X"])
-                sql_query += " where zip5 = '%s' and latitude is not null;\n" % geo_dict["zip"]
+                sql_query += " where zip5 = '%s' and latitude is null;\n" % geo_dict["zip"]
                 fws.write(sql_query)
 
 
-def write_geocode_zip4_csv_to_sql(directory, file_pattern = "geo_us_zip4*.csv"):
+def write_geocode_zip4_csv_to_sql(directory, file_pattern="geo_us_zip4*.csv"):
     geo_csv_files = glob.glob(os.path.join(directory, file_pattern))
     geo_sql_file = os.path.join(directory, "geo_us_zip4.sql")
 
@@ -341,20 +342,17 @@ def write_geocode_zip4_csv_to_sql(directory, file_pattern = "geo_us_zip4*.csv"):
 def execute_sql_script(directory, sql_script_name, starting_i=0):
     cursor = get_new_cursor()
     with open(os.path.join(directory, sql_script_name), "r") as f:
-        sql_script = f.read()
         i = 0
-        statements = sql_script.split(";")
-        logger("Script contains %s statements" % len(statements))
-        for statement in statements:
-
-            if i >= starting_i:
-                cursor.execute(statement.strip())
-
-            if i % 5000 == 0:
-                print(i)
+        sql_string = ""
+        for line in f:
+            sql_string += line
+            stripped_line = line.strip()
+            if stripped_line[-1] == ";":
+                cursor.execute(sql_string.strip())
                 cursor.commit()
+                sql_string = ""
+                i += 1
 
-            i += 1
 
 if __name__ == "__main__":
 
@@ -365,7 +363,7 @@ if __name__ == "__main__":
     geocode_addresses(workspace_path, replace_file=False)
     write_geocode_address_csv_to_sql(workspace_path)
     execute_sql_script(workspace_path, "geo_us_addresses.sql")
-
+    #
     extract_zip4_to_csv(workspace_path)
     geocode_zip4(workspace_path)
     write_geocode_zip4_csv_to_sql(workspace_path)

@@ -480,7 +480,7 @@ create table address
 insert address (first_line, second_line, city, state, postal_code, country_code, address_flattened, address_formatted, address_hash)
   select nc.first_line, nc.second_line, nc.city, nc.state, nc.postal_code, nc.country_code,
     nc.address_flattened, nc.address_formatted, nc.address_hash from nppes_contact nc
-   join temp_max_id_address tmi on tmi.address_hash = nc.address_hash and tmi.max_id = tc.id;
+   join temp_max_id_address tmi on tmi.address_hash = nc.address_hash and tmi.max_id = nc.id;
 
 alter table nppes_contact drop column first_line;
 alter table nppes_contact drop column second_line;
@@ -498,7 +498,6 @@ update address set zip5 = left(postal_code, 5), zip4 = substring(postal_code, 6)
 
     create_indexes_sql = """/* Add indices to the tables */
 
-create unique index pk_npi_nppes_header on npi.nppes_header(npi);
 create unique index pk_npi_hct_proc on healthcare_provider_taxonomy_processed(npi);
 create index idx_oth_prov_id_npi on other_provider_identifiers(npi);
 create index idx_provider_licenses on provider_licenses(npi);
@@ -509,6 +508,8 @@ create index idx_addr_zip5 on address(zip5);
 create index idx_addr_city on address(city);
 create index idx_addr_state on address(state);
 create index idx_addr_latitude on address(latitude);
+create index idx_addr_longitude on address(longitude);
+create index idx_addr_geocdm on address(geocode_method);
 """
     print("")
     print(create_indexes_sql)
