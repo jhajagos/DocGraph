@@ -1832,7 +1832,7 @@ create table rxnorm_prescribe.ndc_drug_details_with_atc1 as
 create index idx_nddwa1_first_atc5 on rxnorm_prescribe.ndc_drug_details_with_atc1(first_atc5);
 
 drop table if exists rxnorm_prescribe.ndc_drug_details_with_atc;
-create table ndc_rxnorm_prescribe.drug_details_with_atc as 
+create table rxnorm_prescribe.ndc_drug_details_with_atc as 
 select nddwa1.*, ai.ATC1, ai.ATC1_Name, ai.ATC2, ai.ATC2_Name, ai.ATC3, ai.ATC3_Name, ai.ATC4, ai.ATC4_Name, ai.ATC5, 
   ai.ATC5_Name, 
     case when ai.ATC5 is null then concat('Z', ' - ', nddwa1.generic_name) else concat(nddwa1.synthetic_atc5, ' - ', nddwa1.generic_name) end 

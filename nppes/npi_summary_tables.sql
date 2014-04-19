@@ -1,107 +1,29 @@
 
- use referral;
 
- drop table npi_summary_taxonomy;
- create table npi_summary_taxonomy (npi  char(10), 
-   state varchar(2),
-   city varchar(255),
-   zip varchar(16),
-   zip5 varchar(5),
-   sole_provider varchar(16),
-   provider_name varchar(1023),
-   sequence_id int,
-   taxonomy_code varchar(16),
-   taxonomy_name varchar(1023),
-   flattened_taxonomy_string varchar(1023),
-   is_ambulance boolean,
-   is_anesthesiology boolean,
-   is_chiropractor boolean,
-   is_clinic_center boolean,
-   is_dentist boolean,
-   is_dermatology boolean,
-   is_emergency_medicine boolean,
-   is_family_medicine boolean,
-   is_internal_medicine boolean,
-   is_pathology boolean,
-   is_physical_therapist boolean,
-   is_physician_assistant boolean,
-   is_radiology boolean,
-   is_registered_nurse boolean,
-   is_surgery boolean,
-   is_hospital boolean,
-   is_laboratory boolean,
-   is_physician boolean,
-   is_diagnostic_radiology boolean,
-   is_nuclear_radiology boolean,
-   latitude float,
-   longitude float,
-   geocode_method varchar(15)
- ); 
- 
-insert into npi_summary_taxonomy
-  (npi,state,zip,city,sole_provider,provider_name,sequence_id,taxonomy_code,taxonomy_name,
-    flattened_taxonomy_string,
-    is_ambulance,
-    is_anesthesiology,
-    is_chiropractor,
-    is_clinic_center,
-    is_dentist,
-    is_dermatology,
-    is_emergency_medicine,
-    is_family_medicine,
-    is_internal_medicine,
-    is_pathology,
-    is_physical_therapist,
-    is_physician_assistant,
-    is_radiology,
-    is_registered_nurse,
-    is_surgery,
-    is_hospital,
-    is_laboratory,
-    is_physician,
-    is_diagnostic_radiology,
-    is_nuclear_radiology,
-    latitude,
-    longitude,
-    geocode_method
-  )
+create table npi_summary_detailed as 
  select fp.*,
    concat(pt1.provider_type,
     if(pt1.classification = '','',concat(' - ', pt1.classification)),
     if(pt1.specialization = '','',concat(' - ', pt1.specialization))) as taxonomy_name,
-    flattened_taxonomy_string,
-    is_ambulance,
-    is_anesthesiology,
-    is_chiropractor,
-    is_clinic_center,
-    is_dentist,
-    is_dermatology,
-    is_emergency_medicine,
-    is_family_medicine,
-    is_internal_medicine,
-    is_pathology,
-    is_physical_therapist,
-    is_physician_assistant,
-    is_radiology,
-    is_registered_nurse,
-    is_surgery,
-    is_hospital,
-    is_laboratory,
-    is_physician,
-    is_diagnostic_radiology,
-    is_nuclear_radiology,
+    pt1.classification,
+    pt1.specialization,
+    a.address_flattened,
+    a.zip5,
+    a.zip4,
     a.latitude,
     a.longitude,
-    a.geocode_method
+    a.geocode_method,
+    hptp.depth as taxonomy_depth, hptp.flattened_taxonomy_string, hptp.is_advanced_practice_midwife, hptp.is_allergy_and_immunology, hptp.is_ambulance, hptp.is_anesthesiologist_assistant, hptp.is_anesthesiology, hptp.is_assistant_podiatric, hptp.is_assisted_living_facility, hptp.is_behavioral_analyst, hptp.is_chiropractor, hptp.is_christian_science_sanitorium, hptp.is_clinic_center, hptp.is_clinical_nurse_specialist, hptp.is_clinical_pharmacology, hptp.is_colon_and_rectal_surgery, hptp.is_counselor, hptp.is_dentist, hptp.is_denturist, hptp.is_dermatology, hptp.is_durable_medical_equipment__medical_supplies, hptp.is_electrodiagnostic_medicine, hptp.is_emergency_medicine, hptp.is_family_medicine, hptp.is_general_acute_care_hospital, hptp.is_general_practice, hptp.is_genetic_counselor_ms, hptp.is_hospitalist, hptp.is_internal_medicine, hptp.is_legal_medicine, hptp.is_marriage_and_family_therapist, hptp.is_massage_therapist, hptp.is_medical_genetics, hptp.is_medical_genetics_phd_medical_genetics, hptp.is_military_hospital, hptp.is_multispecialty, hptp.is_neurological_surgery, hptp.is_neuromusculoskeletal_medicine_and_omm, hptp.is_nuclear_medicine, hptp.is_nurse_anesthetist_certified_registered, hptp.is_nurse_practitioner, hptp.is_obstetrics_and_gynecology, hptp.is_ophthalmology, hptp.is_optometrist, hptp.is_orthopaedic_surgery, hptp.is_otolaryngology, hptp.is_pain_medicine, hptp.is_pathology, hptp.is_pediatrics, hptp.is_pharmacist, hptp.is_pharmacy, hptp.is_pharmacy_technician, hptp.is_physical_medicine_and_rehabilitation, hptp.is_physical_therapist, hptp.is_physician_assistant, hptp.is_plastic_surgery, hptp.is_podiatrist, hptp.is_preventive_medicine, hptp.is_psychiatric_hospital, hptp.is_psychiatric_unit, hptp.is_psychiatry_and_neurology, hptp.is_psychoanalyst, hptp.is_psychologist, hptp.is_radiology, hptp.is_registered_nurse, hptp.is_rehabilitation_hospital, hptp.is_religious_nonmedical_health_care_institution, hptp.is_single_specialty, hptp.is_social_worker, hptp.is_special_hospital, hptp.is_surgery, hptp.is_thoracic_surgery_cardiothoracic_vascular_surgery, hptp.is_transplant_surgery, hptp.is_urology, hptp.is_behavioral_health_and_social_service_providers, hptp.is_hospital, hptp.is_laboratory, hptp.is_managed_care_organization, hptp.is_nursing_care_facility, hptp.is_residential_treatment_facility, hptp.is_student, hptp.is_supplier, hptp.is_physician, hptp.is_addiction_medicine, hptp.is_bariatric_medicine, hptp.is_body_imaging, hptp.is_cardiovascular_disease, hptp.is_clinical_and_laboratory_immunology, hptp.is_clinical_biochemical_genetics, hptp.is_clinical_cardiac_electrophysiology, hptp.is_clinical_cytogenetic, hptp.is_clinical_genetics_md, hptp.is_clinical_molecular_genetics, hptp.is_critical_care_medicine, hptp.is_dermatopathology, hptp.is_diagnostic_neuroimaging, hptp.is_diagnostic_radiology, hptp.is_diagnostic_ultrasound, hptp.is_endocrinology_diabetes_and_metabolism, hptp.is_endodontics, hptp.is_gastroenterology, hptp.is_geriatric_medicine, hptp.is_hematology, hptp.is_hematology_and_oncology, hptp.is_hepatology, hptp.is_hospice_and_palliative_medicine, hptp.is_hypertension_specialist, hptp.is_infectious_disease, hptp.is_interventional_cardiology, hptp.is_interventional_pain_medicine, hptp.is_mohsmicrographic_surgery, hptp.is_magnetic_resonance_imaging_mri, hptp.is_medical_oncology, hptp.is_molecular_genetic_pathology, hptp.is_nephrology, hptp.is_neurology, hptp.is_neuroradiology, hptp.is_nuclear_radiology, hptp.is_oral_and_maxillofacial_pathology, hptp.is_oral_and_maxillofacial_radiology, hptp.is_oral_and_maxillofacial_surgery, hptp.is_orthodontics_and_dentofacial_orthopedics, hptp.is_pediatric_dentistry, hptp.is_pediatric_radiology, hptp.is_pediatric_surgery, hptp.is_periodontics, hptp.is_phd_medical_genetics, hptp.is_plastic_and_reconstructive_surgery, hptp.is_prosthodontics, hptp.is_psychiatry, hptp.is_pulmonary_disease, hptp.is_radiation_oncology, hptp.is_radiological_physics, hptp.is_rheumatology, hptp.is_sleep_medicine, hptp.is_sports_medicine, hptp.is_surgery_of_the_hand, hptp.is_surgical_critical_care, hptp.is_surgical_oncology, hptp.is_therapeutic_radiology, hptp.is_transplant_hepatology, hptp.is_trauma_surgery, hptp.is_vascular_and_interventional_radiology, hptp.is_vascular_surgery 
   from
   (
     select nh1.npi as npi,nh1.Provider_Business_Practice_Location_Address_State_Name as state,
       nh1.Provider_Business_Practice_Location_Address_Postal_Code as zip, nh1.Provider_Business_Practice_Location_Address_City_Name as city,
-      nh1.Is_Sole_Proprietor as sole_provider,
+      nh1.Is_Sole_Proprietor as sole_provider,nh1.Provider_Gender_Code as gender_code,
+      replace(nh1.Provider_Credential_Text,'.','') as credential,
       case
         when nh1.Provider_Organization_Name_Legal_Business_Name is not null then nh1.Provider_Organization_Name_Legal_Business_Name
           else concat(rtrim(nh1.Provider_Last_Name_Legal_Name),', ',rtrim(nh1.Provider_First_Name),' ',
-            if(nh1.provider_credential_text is null,'',nh1.provider_credential_text))
+            if(nh1.provider_credential_text is null,'',replace(nh1.Provider_Credential_Text,'.','')))
       end as provider_name,pl1.sequence_id,
       pl1.Healthcare_Provider_Taxonomy_Code as taxonomy_code
      from npi.nppes_header nh1
@@ -112,10 +34,11 @@ insert into npi_summary_taxonomy
      join npi.nppes_contact nc on nc.npi = fp.npi and nc.address_type = 'practice'
      join npi.address a on a.address_hash = nc.address_hash;
 
-  update npi_summary_taxonomy set zip5 = left(zip, 5);
 
-  create index idx_npi_summary on npi_summary_taxonomy (npi);
-  drop view npi_summary_primary_taxonomy;
-  create view npi_summary_primary_taxonomy as
+  create index idx_npi_summary on npi_summary_detailed (npi);
+  
+  create table npi_summary_detailed_primary_taxonomy as
     select * from
-  npi_summary_taxonomy where sequence_id = 1;
+  npi_summary_detailed where sequence_id = 1
+  order by state, zip5, npi
+  ;

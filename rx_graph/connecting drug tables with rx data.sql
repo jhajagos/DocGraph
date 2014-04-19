@@ -6,7 +6,9 @@ select * from rxnorm_prescribe.ndc_drug_details where ndc like '000540018%';
 
 select count(*) from rx_graph.rx_graph_ndc9;
 
-select rrn.*, nddwa.synthetic_rxcui, nddwa.synthetic_label, nddwa.compact_counter, nddwa.synthetic_rxcui_key, 
+
+select * from 
+(select rrn.*, nddwa.synthetic_rxcui, nddwa.synthetic_label, nddwa.compact_counter, nddwa.synthetic_rxcui_key, 
     nddwa.sbd_rxcui, nddwa.sbd_rxaui, nddwa.semantic_branded_name, nddwa.rxn_available_string, nddwa.rxterm_form, 
     nddwa.rxn_human_drug, nddwa.SAB, nddwa.TTY, nddwa.SUPPRESS, nddwa.bn_rxaui, nddwa.bn_rxcui, nddwa.brand_name, 
     nddwa.dose_form_rxaui, nddwa.dose_form_rxcui, nddwa.dose_form, nddwa.scd_rxaui, nddwa.scd_rxcui, nddwa.semantic_clinical_drug, 
@@ -17,5 +19,5 @@ select rrn.*, nddwa.synthetic_rxcui, nddwa.synthetic_label, nddwa.compact_counte
   from rx_graph.rx_graph_ndc9 rrn 
     left outer join rxnorm_prescribe.ndc9_drug_details_with_atc nddwa on (rrn.ndc9 = nddwa.ndc9)
     join referral.npi_summary_primary_taxonomy nspt on nspt.npi = rrn.npi
-     where nspt.state = 'WY';
+     where nspt.state = 'HI') 
     
