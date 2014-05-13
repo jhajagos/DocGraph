@@ -1,4 +1,4 @@
-/* Run against a UMLS database with all english language sources and all sources */
+/* Run against a UMLS database with all english language sources and all level sources */
 
 /*
 use umls2013ab;

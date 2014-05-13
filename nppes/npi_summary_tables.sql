@@ -42,3 +42,53 @@ create table npi_summary_detailed as
   npi_summary_detailed where sequence_id = 1
   order by state, zip5, npi
   ;
+
+create unique index pk_nsdpt_npi on nppes.npi_summary_detailed_primary_taxonomy(npi);
+
+CREATE VIEW npi_summary_abridged_primary_taxonomy
+AS
+   SELECT npi,
+          state,
+          zip,
+          city,
+          sole_provider,
+          gender_code,
+          credential,
+          provider_name,
+          taxonomy_code,
+          taxonomy_name,
+          classification,
+          specialization,
+          address_flattened,
+          zip5,
+          zip4,
+          latitude,
+          longitude,
+          geocode_method,
+          taxonomy_depth,
+          flattened_taxonomy_string,
+          is_dentist,
+          is_emergency_medicine,
+          is_internal_medicine,
+          is_nurse_practitioner,
+          is_physician_assistant,
+          is_registered_nurse,
+          is_pathology,
+          is_hospital,
+          is_behavioral_health_and_social_service_providers,
+          is_laboratory,
+          is_student,
+          is_physician,
+          is_diagnostic_radiology,
+          is_ambulance,
+          is_chiropractor,
+          is_dermatology,
+          is_family_medicine,
+          is_general_acute_care_hospital,
+          is_hospitalist,
+          is_radiology,
+          is_podiatrist,
+          is_psychiatry,
+          is_nuclear_radiology,
+          is_hematology_and_oncology
+     FROM nppes.npi_summary_detailed_primary_taxonomy nsdpt;

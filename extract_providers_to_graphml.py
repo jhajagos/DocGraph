@@ -16,7 +16,7 @@ import sys
 import csv
 
 REFERRAL_TABLE_NAME = "referral.referral2011"
-NPI_DETAIL_TABLE_NAME = "referral.npi_summary_primary_taxonomy"
+NPI_DETAIL_TABLE_NAME = " nppes.npi_summary_abridged_primary_taxonomy"
 FIELD_NAME_FROM_RELATIONSHIP = "npi_from"
 FIELD_NAME_TO_RELATIONSHIP = "npi_to"
 FIELD_NAME_WEIGHT = "weight"
@@ -51,7 +51,7 @@ def add_nodes_to_graph(cursor, graph, node_type, label_name = None):
             if label_name in attributes:
                 attributes["Label"] = attributes[label_name]
         attributes["node_type"] = node_type
-        graph.add_node(node.npi,attributes)
+        graph.add_node(node.npi, attributes)
         i += 1
     logger("Read %s rows from table" % i)
     nodes_final = len(graph.nodes())
@@ -193,14 +193,17 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
     else:
         logger("Leaf-to-leaf edges were not selected for export")
 
+    print(nx.info(ProviderGraph))
+
+
     logger("Writing GraphML file")
     nx.write_graphml(ProviderGraph, file_name_prefix + "_provider_graph.graphml")
 
     if csv_output:
-        csv_file_name = file_name_prefix + "_edge_list_with_weights.csv"
+        csv_edge_file_name = file_name_prefix + "_edge_list_with_weights.csv"
 
         logger("Writing CSV of edges with weights")
-        with open(csv_file_name,"wb") as f:
+        with open(csv_edge_file_name,"wb") as f:
             csv_edges = csv.writer(f)
             for node1 in ProviderGraph.edge:
                 for node2 in ProviderGraph.edge[node1]:
@@ -208,6 +211,33 @@ def extract_provider_network(where_criteria, referral_table_name=REFERRAL_TABLE_
                     npi_to = node2
                     edge_data = ProviderGraph[node1][node2]
                     csv_edges.writerow((npi_from, npi_to, edge_data["weight"]))
+
+        csv_node_file_name = file_name_prefix + "_node_db.csv"
+        logger("Writing CSV of nodes with attributes")
+
+        with open(csv_node_file_name,"wb") as fw:
+            i = 0
+            csv_nodes = csv.writer(fw)
+            for node in ProviderGraph.node:
+
+                node_dict = ProviderGraph.node[node]
+                if i == 0:
+                    header = node_dict.keys()
+                    header.sort()
+                    csv_nodes.writerow(header)
+
+                row_to_write = []
+                for attribute in header:
+                    if attribute in node_dict:
+                        value_to_write = node_dict[attribute]
+                    else:
+                        value_to_write = ''
+
+                    row_to_write += [value_to_write]
+                csv_nodes.writerow(row_to_write)
+
+                i += 1
+
 
 if __name__ == "__main__":
     number_of_args = len(sys.argv)
