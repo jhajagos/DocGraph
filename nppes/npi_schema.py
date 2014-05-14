@@ -16,6 +16,7 @@
 
 from string import join
 import csv
+import sys
 
 
 def generate_load_table_script(filename,table_name,row_terminator=r"\n",escape_char=r"\0"):
@@ -518,7 +519,14 @@ create index idx_addr_geocdm on address(geocode_method);
 if __name__ == "__main__":
     # Hardcoded file names
     # The assumption in this script that you are using a Unix like file system
-    main("/tmp/npidata_20050523-20140309.csv", "/tmp/nucc_taxonomy_140.csv")
+
+    if len(sys.argv) > 1:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        print("""Run this script to generate a MySQL load script for the NPPES database:
+python npi_schema.py '/tmp/npidata_20050523-20140309.csv' '/tmp/nucc_taxonomy_140.csv'""")
+
+    #main("/tmp/npidata_20050523-20140309.csv", "/tmp/nucc_taxonomy_140.csv")
 
     #Loading the files
     #python npi_schema.py > npi_schema.sql
