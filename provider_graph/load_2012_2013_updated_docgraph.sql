@@ -19,4 +19,7 @@ LOAD DATA INFILE '/tmp/DocGraph-2012-2013-Days30.csv' INTO TABLE teaming_graph_p
        shared_transaction_count = case @shared_transaction_count when '' then NULL else @shared_transaction_count end,
        patient_total = case @patient_total when '' then NULL else @patient_total end,
        same_day_total = case @same_day_total when '' then NULL else @same_day_total end;
+       
+ create index idx_dg_30_13_npi_from on teaming_graph_providers_2012_2013(npi_from);
+ create index idx_dg_30_13_npi_to on teaming_graph_providers_2012_2013(npi_to);
         

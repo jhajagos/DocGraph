@@ -15,11 +15,11 @@ import pprint
 import sys
 import csv
 
-REFERRAL_TABLE_NAME = "referral.referral2011"
+REFERRAL_TABLE_NAME = "teaming.teaming_graph_providers_2012_2013"
 NPI_DETAIL_TABLE_NAME = " nppes.npi_summary_abridged_primary_taxonomy"
 FIELD_NAME_FROM_RELATIONSHIP = "npi_from"
 FIELD_NAME_TO_RELATIONSHIP = "npi_to"
-FIELD_NAME_WEIGHT = "weight"
+FIELD_NAME_WEIGHT = "patient_total"
 
 
 def logger(string_to_write=""):
